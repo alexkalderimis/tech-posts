@@ -14,6 +14,7 @@ type Map = M.Map
 
 data Honesty = Honest | Liar deriving (Eq, Show)
 
+type Claim = (Op, Int)
 data Op = Is | Isnt | Gt | Gte | Lt | Lte deriving (Show, Eq)
 
 data InclusiveRange = Maybe Int :..: Maybe Int
@@ -22,10 +23,10 @@ data InclusiveRange = Maybe Int :..: Maybe Int
 -- a claim about an age is either an inclusive range of ages (potentially
 -- unbounded) or it is two or more disjoint ranges that represent the claim
 -- that an age is either in range a or in range b
-newtype Claim = OneOf { ranges :: NonEmpty InclusiveRange }
+newtype Implication = OneOf { ranges :: NonEmpty InclusiveRange }
   deriving (Show, Eq, Semigroup)
 
-type Conclusions = Map Char (Maybe Claim)
+type Conclusions = Map Char (Maybe Implication)
 type Solution = [(Honesty, Claimant)]
 
 data Claimant = Claimant
@@ -45,13 +46,13 @@ main = mapM_ printSolution (zip [1 ..] viables)
     go conc (h, c) = putStrLn
                    $ unwords [[claimantName c]
                              ,show h
-                             ,maybe "" showClaim 
+                             ,maybe "" showImpl
                               (join $ M.lookup (claimantName c) conc)
                              ]
 
 -- pretty print a claim
-showClaim :: Claim -> String
-showClaim = L.intercalate ";" . fmap showRange . NE.toList . ranges
+showImpl :: Implication -> String
+showImpl = L.intercalate ";" . fmap showRange . NE.toList . ranges
   where
     showRange (Nothing :..: Just x) = ".." <> show x
     showRange (Just x :..: Nothing) = show x <> ".."
@@ -140,10 +141,10 @@ safeMin = foldr (safeBinOp min) Nothing
 safeMax :: (Foldable f, Ord a) => f (Maybe a) -> Maybe a
 safeMax = foldr (safeBinOp max) Nothing
 
-lowerBound :: Claim -> Maybe Int
+lowerBound :: Implication -> Maybe Int
 lowerBound (OneOf cs) = let f (lb :..: _) = lb in safeMin (f <$> cs)
 
-upperBound :: Claim -> Maybe Int
+upperBound :: Implication -> Maybe Int
 upperBound (OneOf cs) = let f (_ :..: ub) = ub in safeMax (f <$> cs)
 
 -- A set of conclusions is valid if there are no contradictions
@@ -154,7 +155,7 @@ viable = all isJust
 -- gather the inferred conclusions
 conclusions :: [(Honesty, Map Char (Op, Int))] -> Conclusions
 conclusions inp = M.fromListWith (liftKleisli infer)
-                                 (fmap (pure . uncurry fromOp) <$> claims)
+                                 (fmap (pure . fromOp) <$> claims)
   where
     claims = [(who, (f op, val)) | (h, m) <- inp
                                  , (who, (op, val)) <- M.toList m
@@ -180,9 +181,9 @@ invert Gte  = Lt
 invert Lt   = Gte
 invert Lte  = Gt
 
--- Given a defunctionalised Op, get the function from age to claim
-fromOp :: Op -> Int -> Claim
-fromOp op = case op of
+-- Get the implication from a claim
+fromOp :: Claim -> Implication
+fromOp (op, age) = ($ age) $ case op of
   Is   -> is
   Isnt -> isnt
   Gt   -> gt
@@ -192,7 +193,7 @@ fromOp op = case op of
 
 -- given two valid claims, infer the valid conclusion. If they are in
 -- contradiction, then Nothing is returned.
-infer :: Claim -> Claim -> Maybe Claim
+infer :: Implication -> Implication -> Maybe Implication
 
 -- where we have multiple disjoint possible ranges, we infer
 -- by taking the cartesian product of the inferences.
@@ -212,26 +213,26 @@ infer (OneOf lhs) (OneOf rhs) =
              else pure (lb :..: ub)
 
 -- smart constructors for claims
-is :: Int -> Claim
+is :: Int -> Implication
 is x = inRange $ pure x :..: pure x
 
-isnt :: Int -> Claim
+isnt :: Int -> Implication
 isnt x = lt x <> gt x
 
-gt :: Int -> Claim
+gt :: Int -> Implication
 gt x = inRange $ pure (x + 1) :..: Nothing
 
-gte :: Int -> Claim
+gte :: Int -> Implication
 gte x = inRange $ pure x :..: Nothing
 
-lt :: Int -> Claim
+lt :: Int -> Implication
 lt x = inRange $ Nothing :..: pure (x - 1)
 
-lte :: Int -> Claim
+lte :: Int -> Implication
 lte x = inRange $ Nothing :..: pure x
 
-anything :: Claim
+anything :: Implication
 anything = inRange $ Nothing :..: Nothing
 
-inRange :: InclusiveRange -> Claim
+inRange :: InclusiveRange -> Implication
 inRange = OneOf . pure
