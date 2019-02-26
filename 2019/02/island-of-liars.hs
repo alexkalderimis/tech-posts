@@ -1,8 +1,13 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 import           Control.Applicative
 import           Control.Monad
 import qualified Data.List           as L
+import qualified Data.List.NonEmpty  as NE
+import           Data.List.NonEmpty  (NonEmpty)
 import qualified Data.Map.Strict     as M
 import           Data.Maybe
+import           Data.Semigroup
 import qualified Data.Set            as S
 
 type Map = M.Map
@@ -11,13 +16,14 @@ data Honesty = Honest | Liar deriving (Eq, Show)
 
 data Op = Is | Isnt | Gt | Gte | Lt | Lte deriving (Show, Eq)
 
+data InclusiveRange = Maybe Int :..: Maybe Int
+  deriving (Show, Eq)
+
 -- a claim about an age is either an inclusive range of ages (potentially
 -- unbounded) or it is two or more disjoint ranges that represent the claim
 -- that an age is either in range a or in range b
-data Claim
-  = Claim (Maybe Int) (Maybe Int)
-  | OneOf [Claim]
-  deriving (Show, Eq)
+newtype Claim = OneOf { ranges :: NonEmpty InclusiveRange }
+  deriving (Show, Eq, Semigroup)
 
 type Conclusions = Map Char (Maybe Claim)
 type Solution = [(Honesty, Claimant)]
@@ -45,13 +51,14 @@ main = mapM_ printSolution (zip [1 ..] viables)
 
 -- pretty print a claim
 showClaim :: Claim -> String
-showClaim (OneOf cs)                = L.intercalate ";" (fmap showClaim cs)
-showClaim (Claim Nothing (Just x))  = ".." <> show x
-showClaim (Claim (Just x) Nothing)  = show x <> ".."
-showClaim (Claim (Just x) (Just y)) = if x == y
+showClaim = L.intercalate ";" . fmap showRange . NE.toList . ranges
+  where
+    showRange (Nothing :..: Just x) = ".." <> show x
+    showRange (Just x :..: Nothing) = show x <> ".."
+    showRange (Just x :..: Just y)  = if x == y
                                          then show x
                                          else show x <> ".." <> show y
-showClaim (Claim Nothing Nothing)   = "Contradiction"
+    showRange _   = "anything"
 
 -- the islanders in the problem, with their claims
 islanders :: [Claimant]
@@ -81,8 +88,8 @@ viables = filter (uncurry meetsAgeLimitRule)
 
 -- produce an arrangement of xs of size n
 arrangement :: [a] -> Int -> [[a]]
-arrangement _ 0 = [[]]
-arrangement xs n = xs >>= \x -> fmap (x:) (arrangement xs (n - 1))
+arrangement _  0 = [[]]
+arrangement xs n = xs >>= \x -> (x:) <$> arrangement xs (n - 1)
 
 -- Associate the conclusions with the solution. Rather than
 -- recomputing the inferences every time we need them, we carry it
@@ -127,19 +134,17 @@ lowestMaxAge isRelevant = safeMin
 safeBinOp :: (a -> a -> a) -> Maybe a -> Maybe a -> Maybe a
 safeBinOp f ma mb = liftA2 f ma mb <|> ma <|> mb
 
-safeMin :: Ord a => [Maybe a] -> Maybe a
+safeMin :: (Foldable f, Ord a) => f (Maybe a) -> Maybe a
 safeMin = foldr (safeBinOp min) Nothing
 
-safeMax :: Ord a => [Maybe a] -> Maybe a
+safeMax :: (Foldable f, Ord a) => f (Maybe a) -> Maybe a
 safeMax = foldr (safeBinOp max) Nothing
 
 lowerBound :: Claim -> Maybe Int
-lowerBound (Claim minAge _) = minAge
-lowerBound (OneOf cs) = safeMin (lowerBound <$> cs)
+lowerBound (OneOf cs) = let f (lb :..: _) = lb in safeMin (f <$> cs)
 
 upperBound :: Claim -> Maybe Int
-upperBound (Claim _ maxAge) = maxAge
-upperBound (OneOf cs) = safeMax (upperBound <$> cs)
+upperBound (OneOf cs) = let f (_ :..: ub) = ub in safeMax (f <$> cs)
 
 -- A set of conclusions is valid if there are no contradictions
 viable :: Conclusions -> Bool
@@ -189,43 +194,44 @@ fromOp op = case op of
 -- contradiction, then Nothing is returned.
 infer :: Claim -> Claim -> Maybe Claim
 
--- all claims have at least one defined bound, guaranteed by
--- use of smart constructors, and a claim is valid so long
--- as it can hold at least one value.
-infer (Claim a b) (Claim a' b') =
-  let lb = safeBinOp max a a'
-      ub = safeBinOp min b b'
-   in if fromMaybe False (liftA2 (>) lb ub)
-         then Nothing -- invalid, lb > ub
-         else pure (Claim lb ub)
-
 -- where we have multiple disjoint possible ranges, we infer
 -- by taking the cartesian product of the inferences.
 infer (OneOf lhs) (OneOf rhs) =
-  case catMaybes [infer a b | a <- lhs, b <- rhs] of
-    []  -> Nothing
-    [x] -> Just x
-    xs  -> Just (OneOf xs)
-
--- dispatch to the second equation
-infer a@OneOf{} b@Claim{} = infer a (OneOf [b])
-infer a@Claim{} b@OneOf{} = infer (OneOf [a]) a
+  fmap OneOf
+  . NE.nonEmpty
+  $ catMaybes [infer' a b | a <- NE.toList lhs, b <- NE.toList rhs]
+  where
+    -- all claims have at least one defined bound, guaranteed by
+    -- use of smart constructors, and a claim is valid so long
+    -- as it can hold at least one value.
+    infer' (a :..: b) (a' :..: b') = 
+      let lb = safeBinOp max a a'
+          ub = safeBinOp min b b'
+       in if fromMaybe False (liftA2 (>) lb ub)
+             then Nothing -- invalid, lb > ub
+             else pure (lb :..: ub)
 
 -- smart constructors for claims
 is :: Int -> Claim
-is x = Claim (pure x) (pure x)
+is x = inRange $ pure x :..: pure x
 
 isnt :: Int -> Claim
-isnt x = OneOf [lt x, gt x]
+isnt x = lt x <> gt x
 
 gt :: Int -> Claim
-gt x = Claim (pure (x + 1)) Nothing
+gt x = inRange $ pure (x + 1) :..: Nothing
 
 gte :: Int -> Claim
-gte x = Claim (pure x) Nothing
+gte x = inRange $ pure x :..: Nothing
 
 lt :: Int -> Claim
-lt x = Claim Nothing (pure (x - 1))
+lt x = inRange $ Nothing :..: pure (x - 1)
 
 lte :: Int -> Claim
-lte x = Claim Nothing (pure x)
+lte x = inRange $ Nothing :..: pure x
+
+anything :: Claim
+anything = inRange $ Nothing :..: Nothing
+
+inRange :: InclusiveRange -> Claim
+inRange = OneOf . pure
