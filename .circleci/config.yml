@@ -1,8 +1,20 @@
 version: 2.1
 jobs:
-  build:
+  build_clj:
     docker:
       - image: circleci/clojure:openjdk-11-lein-2.9.0
+    steps:
+      - checkout
+      - restore_cache:
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          name: Restore Cached Dependencies
+          keys:
+            - tech-posts-v1-clj-{{ checksum "project.clj" }}
+      - run:
+          name: Resolve/Update Dependencies
+          command: lein deps
+  build_hs:
+    docker:
       - image: fpco/stack-build:lts
     steps:
       - checkout
@@ -10,7 +22,7 @@ jobs:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           name: Restore Cached Dependencies
           keys:
-            - tech-posts-v1-{{ checksum "tech-posts.cabal" }}-{{ checksum "stack.yaml" }}-{{ checksum "project.clj" }}
+            - tech-posts-v1-hs-{{ checksum "tech-posts.cabal" }}-{{ checksum "stack.yaml" }}
       - run:
           name: Resolve/Update Dependencies
           command: stack setup
