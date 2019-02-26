@@ -29,3 +29,9 @@ jobs:
       - run:
           name: Compile all haskell posts
           command: stack ghc 2019/02/island-of-liars.hs
+workflows:
+  version: 2
+  test_all:
+    jobs:
+      - build_hs
+      - build_clj
