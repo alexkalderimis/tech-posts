@@ -3,8 +3,8 @@
 import           Control.Applicative
 import           Control.Monad
 import qualified Data.List           as L
-import qualified Data.List.NonEmpty  as NE
 import           Data.List.NonEmpty  (NonEmpty)
+import qualified Data.List.NonEmpty  as NE
 import qualified Data.Map.Strict     as M
 import           Data.Maybe
 import           Data.Semigroup
@@ -28,7 +28,20 @@ data InclusiveRange = Maybe Int :..: Maybe Int
 newtype Implication = OneOf { ranges :: NonEmpty InclusiveRange }
   deriving (Show, Eq, Semigroup)
 
-type Conclusions = Map Char (Maybe Implication)
+newtype Consequence = Consequence { getConsequence :: Maybe Implication }
+  deriving (Show, Eq)
+
+instance Semigroup Consequence where
+  (Consequence ma) <> (Consequence mb) = Consequence (liftKleisli infer ma mb)
+
+instance Monoid Consequence where
+  mempty = Consequence (pure anything)
+  mappend = (<>)
+
+consequence :: Implication -> Consequence
+consequence = Consequence . pure
+
+type Conclusions = Map Char Consequence
 type Solution = [(Honesty, Claimant)]
 
 data Claimant = Claimant
@@ -49,7 +62,7 @@ main = mapM_ printSolution (zip [1 ..] viables)
                    $ unwords [[claimantName c]
                              ,show h
                              ,maybe "" showImpl
-                              (join $ M.lookup (claimantName c) conc)
+                              (M.lookup (claimantName c) conc >>= getConsequence)
                              ]
 
 -- pretty print a claim
@@ -110,61 +123,45 @@ withConclusion cs = (cs, conclusions (fmap claimantClaims <$> cs))
 -- Nothing, then this meets the test, since one or other group is not constrained.
 meetsAgeLimitRule :: Solution -> Conclusions -> Bool
 meetsAgeLimitRule claimants conc =
-  let honest = S.fromList [who | (Honest, Claimant who _) <- claimants]
-      isHonest = (`S.member` honest)
-      oldestHonest = highestMinAge isHonest conc
-      youngestLiar = lowestMaxAge (not . isHonest) conc
+  let oldestHonest = getAge max lowerBound isHonest
+      youngestLiar = getAge min upperBound (not . isHonest)
    in fromMaybe True (liftA2 (<) oldestHonest youngestLiar)
+ where
+   honest = S.fromList [who | (Honest, Claimant who _) <- claimants]
+   isHonest = (`S.member` honest)
 
--- find the highest minimum age in the subset of the conclusions selected
--- by the predicate. i.e. the age all islanders who match the predicate are
--- guaranteed to be <=
-highestMinAge :: (Char -> Bool) -> Conclusions -> Maybe Int
-highestMinAge isRelevant = safeMax
-                         . fmap (snd >=> lowerBound)
-                         . filter (isRelevant . fst)
-                         . M.toList
+   lowerBound (OneOf cs) = let f (lb :..: _) = lb in safely min (f <$> cs)
+   upperBound (OneOf cs) = let f (_ :..: ub) = ub in safely max (f <$> cs)
 
--- find the lowest maximum age in the subset of the conclusions selected
--- by the predicate. i.e. the age all islanders who match the predicate are
--- guaranteed to be >=
-lowestMaxAge :: (Char -> Bool) -> Conclusions -> Maybe Int
-lowestMaxAge isRelevant = safeMin
-                        . fmap (snd >=> upperBound)
-                        . filter (isRelevant . fst)
-                        . M.toList
+   getAge overall perPerson isRelevant
+       = safely overall
+       . fmap (getConsequence . snd >=> perPerson)
+       . filter (isRelevant . fst)
+       $ M.toList conc
 
 -- apply a binary operation, taking lhs if rhs is Nothing, or rhs if
 -- lhs is Nothing
 safeBinOp :: (a -> a -> a) -> Maybe a -> Maybe a -> Maybe a
 safeBinOp f ma mb = liftA2 f ma mb <|> ma <|> mb
 
-safeMin :: (Foldable f, Ord a) => f (Maybe a) -> Maybe a
-safeMin = foldr (safeBinOp min) Nothing
-
-safeMax :: (Foldable f, Ord a) => f (Maybe a) -> Maybe a
-safeMax = foldr (safeBinOp max) Nothing
-
-lowerBound :: Implication -> Maybe Int
-lowerBound (OneOf cs) = let f (lb :..: _) = lb in safeMin (f <$> cs)
-
-upperBound :: Implication -> Maybe Int
-upperBound (OneOf cs) = let f (_ :..: ub) = ub in safeMax (f <$> cs)
+safely :: (Foldable f, Ord a) => (a -> a -> a) -> f (Maybe a) -> Maybe a
+safely f = foldr (safeBinOp f) Nothing
 
 -- A set of conclusions is valid if there are no contradictions
 viable :: Conclusions -> Bool
-viable = all isJust
+viable = all (isJust . getConsequence)
 
 -- Given a description of the claims, and whether they are honest,
 -- gather the inferred conclusions
 conclusions :: [(Honesty, S.Set (Char, Claim))] -> Conclusions
-conclusions inp = M.fromListWith (liftKleisli infer)
-                                 (fmap (pure . implication) <$> claims)
-  where
-    claims = [(who, (f op, val)) | (h, cs) <- inp
-                                 , (who, (op, val)) <- S.toList cs
-                                 , let f = if h == Liar then invert else id
-             ]
+conclusions inp =
+  M.fromListWith (<>)
+  . fmap (fmap (consequence . implication))
+  $ [(who, (trust h op, val)) | (h, cs) <- inp
+                              , (who, (op, val)) <- S.toList cs
+    ]
+  where trust Liar = invert
+        trust Honest = id
 
 -- Give a two-parameter kleisli arrow, apply it to two arguments
 -- (hard to believe this isn't in Control.Monad tbh)
@@ -201,22 +198,20 @@ infer :: Implication -> Implication -> Maybe Implication
 
 -- where we have multiple disjoint possible ranges, we infer
 -- by taking the cartesian product of the inferences.
-infer (OneOf lhs) (OneOf rhs) =
-  fmap OneOf
-  . NE.nonEmpty
-  $ catMaybes [infer' a b | a <- NE.toList lhs, b <- NE.toList rhs]
+infer (OneOf lhs) (OneOf rhs) = fmap OneOf . NE.nonEmpty . catMaybes
+  $ liftA2 infer' (NE.toList lhs) (NE.toList rhs)
   where
     -- all claims have at least one defined bound, guaranteed by
     -- use of smart constructors, and a claim is valid so long
     -- as it can hold at least one value.
-    infer' (a :..: b) (a' :..: b') = 
+    infer' (a :..: b) (a' :..: b') =
       let lb = safeBinOp max a a'
           ub = safeBinOp min b b'
        in if fromMaybe False (liftA2 (>) lb ub)
              then Nothing -- invalid, lb > ub
              else pure (lb :..: ub)
 
--- smart constructors for claims
+-- smart constructors for implications
 is :: Int -> Implication
 is x = inRange $ pure x :..: pure x
 
