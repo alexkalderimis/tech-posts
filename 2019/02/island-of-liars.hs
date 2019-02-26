@@ -11,11 +11,13 @@ import           Data.Semigroup
 import qualified Data.Set            as S
 
 type Map = M.Map
+type Set = S.Set
 
 data Honesty = Honest | Liar deriving (Eq, Show)
 
 type Claim = (Op, Int)
-data Op = Is | Isnt | Gt | Gte | Lt | Lte deriving (Show, Eq)
+type Islander = Char
+data Op = Is | Isnt | Gt | Gte | Lt | Lte deriving (Show, Eq, Ord)
 
 data InclusiveRange = Maybe Int :..: Maybe Int
   deriving (Show, Eq)
@@ -30,8 +32,8 @@ type Conclusions = Map Char (Maybe Implication)
 type Solution = [(Honesty, Claimant)]
 
 data Claimant = Claimant
-  { claimantName   :: Char
-  , claimantClaims :: Map Char (Op, Int)
+  { claimantName   :: Islander
+  , claimantClaims :: Set (Islander, Claim)
   } deriving (Show, Eq)
 
 -- print out all the viable solutions
@@ -63,22 +65,24 @@ showImpl = L.intercalate ";" . fmap showRange . NE.toList . ranges
 
 -- the islanders in the problem, with their claims
 islanders :: [Claimant]
-islanders = [Claimant 'a' (M.fromList [('b', (Gt, 20))
-                                      ,('d', (Gt, 16))
-                                      ])
-            ,Claimant 'b' (M.fromList [('c', (Gt, 18))
-                                      ,('e', (Lt, 20))
-                                      ])
-            ,Claimant 'c' (M.fromList [('d', (Lt, 22))
-                                      ,('a', (Is, 19))
-                                      ])
-            ,Claimant 'd' (M.fromList [('e', (Isnt, 17))
-                                      ,('b', (Is, 20))
-                                      ])
-            ,Claimant 'e' (M.fromList [('a', (Gt, 21))
-                                      ,('c', (Lt, 18))
-                                      ])
+islanders = ['a' `saysThat` ['b' ==> (Gt, 20)
+                            ,'d' ==> (Gt, 16)
+                            ]
+            ,'b' `saysThat` ['c' ==> (Gt, 18)
+                            ,'e' ==> (Lt, 20)
+                            ]
+            ,'c' `saysThat` ['d' ==> (Lt, 22)
+                            ,'a' ==> (Is, 19)
+                            ]
+            ,'d' `saysThat` ['e' ==> (Isnt, 17)
+                            ,'b' ==> (Is, 20)
+                            ]
+            ,'e' `saysThat` ['a' ==> (Gt, 21)
+                            ,'c' ==> (Lt, 18)
+                            ]
             ]
+  where saysThat who cs = Claimant who (S.fromList cs)
+        (==>) = (,)
 
 -- find all viable solutions
 viables :: [(Solution, Conclusions)]
@@ -153,12 +157,12 @@ viable = all isJust
 
 -- Given a description of the claims, and whether they are honest,
 -- gather the inferred conclusions
-conclusions :: [(Honesty, Map Char (Op, Int))] -> Conclusions
+conclusions :: [(Honesty, S.Set (Char, Claim))] -> Conclusions
 conclusions inp = M.fromListWith (liftKleisli infer)
-                                 (fmap (pure . fromOp) <$> claims)
+                                 (fmap (pure . implication) <$> claims)
   where
-    claims = [(who, (f op, val)) | (h, m) <- inp
-                                 , (who, (op, val)) <- M.toList m
+    claims = [(who, (f op, val)) | (h, cs) <- inp
+                                 , (who, (op, val)) <- S.toList cs
                                  , let f = if h == Liar then invert else id
              ]
 
@@ -182,8 +186,8 @@ invert Lt   = Gte
 invert Lte  = Gt
 
 -- Get the implication from a claim
-fromOp :: Claim -> Implication
-fromOp (op, age) = ($ age) $ case op of
+implication :: Claim -> Implication
+implication (op, age) = ($ age) $ case op of
   Is   -> is
   Isnt -> isnt
   Gt   -> gt
