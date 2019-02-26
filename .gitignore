@@ -1,3 +1,6 @@
 .lein-repl-history
 dist
 target
+*.hi
+*.o
+.stack-work

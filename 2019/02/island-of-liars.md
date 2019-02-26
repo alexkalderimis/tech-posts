@@ -253,7 +253,7 @@ Contradiction
 Great, we seem to have a working inference engine. We can now wrap that up in a
 Monoid:
 
-```
+```haskell
 newtype Consequence = Consequence { getConsequence :: Maybe Implication }
   deriving (Show, Eq)
 

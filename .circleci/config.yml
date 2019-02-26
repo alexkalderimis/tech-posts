@@ -1,0 +1,19 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/clojure:openjdk-11-lein-2.9.0
+      - image: fpco/stack-build:lts
+    steps:
+      - checkout
+      - restore_cache:
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          name: Restore Cached Dependencies
+          keys:
+            - tech-posts-v1-{{ checksum "tech-posts.cabal" }}-{{ checksum "stack.yaml" }}-{{ checksum "project.clj" }}
+      - run:
+          name: Resolve/Update Dependencies
+          command: stack setup
+      - run:
+          name: Compile all haskell posts
+          command: stack ghc 2019/02/island-of-liars.hs

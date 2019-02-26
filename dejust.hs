@@ -8,22 +8,25 @@ main = do
   putStr (concat ls)
 
 dejust :: [String] -> [String]
-dejust = go False False (Endo id)
+dejust = go Nothing False (Endo id)
   where
     z = Endo id :: Endo [String]
     go _ _ acc [] = appEndo acc []
     go literal prevWasText acc (s:strs) =
       let literal' = case s of
-                      ('`':'`':'`':_) -> not literal
-                      ('-':'-':'-':_) -> not literal
+                      ('`':'`':'`':_) -> checkLiteral literal '`'
+                      ('-':'-':'-':_) -> checkLiteral literal '-'
                       _               -> literal
-          prevWasText' = not literal && s /= []
+          prevWasText' = isNothing literal && s /= []
           mid = case (literal, prevWasText) of
-                  (True, _) -> Endo ("\n":)
+                  (Just _, _) -> Endo ("\n":)
                   (_, True) -> if all (`elem` ['-', '=']) s || startsWith '*' s
                                   then Endo ("\n":)
                                   else Endo (" ":)
                   _         -> if null s then Endo id else Endo ("\n\n":)
        in go literal' prevWasText' (acc <> mid <> Endo (s:)) strs
     startsWith c = (Just c ==) . listToMaybe
+    checkLiteral Nothing c = Just c
+    checkLiteral (Just c') c = if c' == c then Nothing
+                                          else Just c'
 
