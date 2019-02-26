@@ -30,6 +30,7 @@ main = mapM_ printSolution (zip [1 ..] viables)
   where
     printSolution (n, (sol, conc)) = do
       putStrLn $ "Solution: " <> show n
+      putStrLn $ replicate 15 '-'
       mapM_ (go conc) sol
       putStrLn ""
     go conc (h, c) = putStrLn
@@ -46,7 +47,7 @@ showClaim (Claim (Just x) Nothing)  = show x <> ".."
 showClaim (Claim (Just x) (Just y)) = if x == y
                                          then show x
                                          else show x <> ".." <> show y
-showClaim (Claim Nothing Nothing)   = "???"
+showClaim (Claim Nothing Nothing)   = "Contradiction"
 
 islanders :: [Claimant]
 islanders = [Claimant 'a' (M.fromList [('b', (Gt, 20))
@@ -83,24 +84,39 @@ withConclusion cs = (cs, conclusions (fmap claimantClaims <$> cs))
 meetsAgeLimitRule :: Solution -> Conclusions -> Bool
 meetsAgeLimitRule claimants conc =
   let honest = S.fromList [who | (Honest, Claimant who _) <- claimants]
-      oldestHonest = ageLimit max (`S.member` honest) conc
-      youngestLiar = ageLimit min (not . flip S.member honest) conc
-   in case oldestHonest <|> fmap pred youngestLiar of
-        Nothing  -> False
-        Just lim -> viable (applyAgeLimit honest lim conc)
+      isHonest = (`S.member` honest)
+      oldestHonest = highestMinAge isHonest conc
+      youngestLiar = lowestMaxAge (not . isHonest) conc
+   in fromMaybe True (liftA2 (<) oldestHonest youngestLiar)
 
-ageLimit :: (Int -> Int -> Int) -> (Char -> Bool) -> Conclusions -> Maybe Int
-ageLimit f isRelevant concs =
-  let knownAges = fmap (snd >=> knownAge)
-                . filter (isRelevant . fst)
-                . M.toList
-                $ concs
-   in foldr (\ma -> maybe ma (\b -> fmap (f b) ma)) Nothing knownAges
+highestMinAge :: (Char -> Bool) -> Conclusions -> Maybe Int
+highestMinAge isRelevant = safeMax
+                         . fmap (snd >=> lowerBound)
+                         . filter (isRelevant . fst)
+                         . M.toList
 
-applyAgeLimit :: S.Set Char -> Int -> Conclusions -> Conclusions
-applyAgeLimit honest limit = M.mapWithKey $ \who ->
-  let constraint = if S.member who honest then lte else gt
-   in (>>= infer (constraint limit))
+lowestMaxAge :: (Char -> Bool) -> Conclusions -> Maybe Int
+lowestMaxAge isRelevant = safeMin
+                         . fmap (snd >=> upperBound)
+                         . filter (isRelevant . fst)
+                         . M.toList
+
+safeBinOp :: (a -> a -> a) -> Maybe a -> Maybe a -> Maybe a
+safeBinOp f ma mb = liftA2 f ma mb <|> ma <|> mb
+
+safeMin :: Ord a => [Maybe a] -> Maybe a
+safeMin = foldr (safeBinOp min) Nothing
+
+safeMax :: Ord a => [Maybe a] -> Maybe a
+safeMax = foldr (safeBinOp max) Nothing
+
+lowerBound :: Claim -> Maybe Int
+lowerBound (Claim minAge _) = minAge
+lowerBound (OneOf cs) = safeMin (lowerBound <$> cs)
+
+upperBound :: Claim -> Maybe Int
+upperBound (Claim _ maxAge) = maxAge
+upperBound (OneOf cs) = safeMax (upperBound <$> cs)
 
 knownAge :: Claim -> Maybe Int
 knownAge (Claim (Just x) (Just y)) | x == y = Just x
@@ -144,8 +160,8 @@ fromOp op = case op of
 infer :: Claim -> Claim -> Maybe Claim
 
 infer (Claim a b) (Claim a' b') =
-  let lb = (max <$> a <*> a') <|> a <|> a'
-      ub = (min <$> b <*> b') <|> b <|> b'
+  let lb = safeBinOp max a a'
+      ub = safeBinOp min b b'
    in case (lb, ub) of
         (Nothing, Nothing) -> Nothing
         (Just x, Just y)   | x > y -> Nothing
