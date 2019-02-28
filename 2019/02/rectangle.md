@@ -270,7 +270,7 @@ value of all the nodes beneath it. Our tree will also store the size of the
 trees below it, so that we can have _O(1)_ sizes. Happily, such trees are easy
 to define in Haskell:
 
-```
+```haskell
 data SegmentTree a
   = Empty
   | Tip a
@@ -284,7 +284,7 @@ contain a summary of their minimum value and their total size, and the concept
 of smushing together can be understood as the `(<>)` method of the `Semigroup`
 type-class:
 
-```
+```haskell
 instance (Ord a) => Semigroup (SegmentTree a) where
   Empty <> a = a
   a <> Empty = a
@@ -298,7 +298,7 @@ tips and branches we build new tips, that in turn contain the global minimum
 values and the sum of the sizes. So we need some way to get the value and the
 size:
 
-```
+```haskell
 value :: SegmentTree a -> Maybe a
 value Empty          = Nothing
 value (Tip a)        = Just a
@@ -312,7 +312,7 @@ size (Branch _ x _ _) = x
 
 And being able to turn it back into a list would be nice:
 
-````
+````haskell
 treeToList :: SegmentTree a -> [a]
 treeToList = flip appEndo [] . go
   where go Empty          = Endo id
@@ -325,7 +325,7 @@ a balanced tree would be nice, a quick way to do that is with the `treeFold`
 operation (from Jon Fairbairn), which builds up the new folded structure without
 being purely left or right associative:
 
-```
+```haskell
 treeFold :: (a -> a -> a) -> a -> [a] -> a
 treeFold f = go
   where
@@ -385,7 +385,7 @@ side as we return.
 All these pieces let us write a divide-and-conquer function that performs the
 minimum search once, and where each split takes _O(logn)_ time:
 
-```
+```haskell
 divideAndConq = maxArea . minimalSearchTree
   where
     maxArea t = flip (maybe 0) (splitTree t)
