@@ -312,12 +312,12 @@ size (Branch _ x _ _) = x
 
 And being able to turn it back into a list would be nice:
 
-````haskell
+```haskell
 treeToList :: SegmentTree a -> [a]
 treeToList = flip appEndo [] . go
-  where go Empty          = Endo id
-        go (Tip a)        = Endo (a:)
-        go (Branch _ l r) = go l <> go r
+  where go Empty            = Endo id
+        go (Tip a)          = Endo (a:)
+        go (Branch _ _ l r) = go l <> go r
 ```
 
 As a next step, we need a way to build such a tree from a list of values. Since
