@@ -1,0 +1,20 @@
+name: 'tech-posts'
+version: 0.0.1.0
+description: My technical musings
+category: Personal blog
+author:
+  - Alex Kalderimis
+github: alexkalderimis/tech-posts
+
+dependencies:
+  - base
+  - containers
+  - fingertree
+  - markdown-unlit
+  - criterion
+  - hakyll
+
+executables:
+  rectangle:
+    main: rectangle.hs
+    source-dirs: 2019/02

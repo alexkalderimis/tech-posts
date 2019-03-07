@@ -4,3 +4,5 @@ target
 *.hi
 *.o
 .stack-work
+_cache
+_site

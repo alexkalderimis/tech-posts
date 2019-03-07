@@ -1,0 +1,210 @@
+benchmarking main/tiny/dividing-segment-tree-treemap
+time                 19.23 μs   (18.65 μs .. 19.92 μs)
+                     0.993 R²   (0.990 R² .. 0.997 R²)
+mean                 19.27 μs   (18.82 μs .. 19.86 μs)
+std dev              1.732 μs   (1.177 μs .. 2.889 μs)
+variance introduced by outliers: 83% (severely inflated)
+
+benchmarking main/tiny/dividing-finger-tree
+time                 80.99 μs   (79.26 μs .. 82.87 μs)
+                     0.994 R²   (0.990 R² .. 0.997 R²)
+mean                 82.31 μs   (80.24 μs .. 87.30 μs)
+std dev              10.27 μs   (5.754 μs .. 18.37 μs)
+variance introduced by outliers: 88% (severely inflated)
+
+benchmarking main/tiny/dividing-split-tree
+time                 11.43 μs   (11.14 μs .. 11.75 μs)
+                     0.993 R²   (0.989 R² .. 0.997 R²)
+mean                 11.69 μs   (11.36 μs .. 12.37 μs)
+std dev              1.526 μs   (901.0 ns .. 2.401 μs)
+variance introduced by outliers: 91% (severely inflated)
+
+benchmarking main/tiny/scanning
+time                 7.469 μs   (7.310 μs .. 7.650 μs)
+                     0.995 R²   (0.993 R² .. 0.998 R²)
+mean                 7.641 μs   (7.445 μs .. 8.104 μs)
+std dev              1.000 μs   (500.2 ns .. 1.853 μs)
+variance introduced by outliers: 92% (severely inflated)
+
+benchmarking main/tiny/thereAndBack-tuples
+time                 2.095 μs   (2.040 μs .. 2.145 μs)
+                     0.995 R²   (0.993 R² .. 0.997 R²)
+mean                 2.091 μs   (2.054 μs .. 2.149 μs)
+std dev              147.9 ns   (113.3 ns .. 201.2 ns)
+variance introduced by outliers: 79% (severely inflated)
+
+benchmarking main/tiny/thereAndBack-strict-pairs
+time                 1.401 μs   (1.367 μs .. 1.441 μs)
+                     0.994 R²   (0.991 R² .. 0.998 R²)
+mean                 1.397 μs   (1.373 μs .. 1.452 μs)
+std dev              121.5 ns   (74.48 ns .. 207.1 ns)
+variance introduced by outliers: 86% (severely inflated)
+
+benchmarking main/small/dividing-segment-tree-treemap
+time                 220.6 μs   (214.8 μs .. 228.0 μs)
+                     0.989 R²   (0.983 R² .. 0.995 R²)
+mean                 230.5 μs   (222.2 μs .. 246.5 μs)
+std dev              40.63 μs   (19.88 μs .. 81.87 μs)
+variance introduced by outliers: 93% (severely inflated)
+
+benchmarking main/small/dividing-finger-tree
+time                 909.4 μs   (882.9 μs .. 943.8 μs)
+                     0.988 R²   (0.980 R² .. 0.996 R²)
+mean                 910.6 μs   (890.4 μs .. 948.7 μs)
+std dev              92.01 μs   (57.76 μs .. 159.7 μs)
+variance introduced by outliers: 74% (severely inflated)
+
+benchmarking main/small/dividing-split-tree
+time                 142.9 μs   (139.1 μs .. 147.6 μs)
+                     0.992 R²   (0.985 R² .. 0.997 R²)
+mean                 144.0 μs   (140.7 μs .. 152.1 μs)
+std dev              16.22 μs   (8.039 μs .. 30.90 μs)
+variance introduced by outliers: 85% (severely inflated)
+
+benchmarking main/small/scanning
+time                 90.89 μs   (88.22 μs .. 93.97 μs)
+                     0.993 R²   (0.989 R² .. 0.997 R²)
+mean                 92.09 μs   (89.96 μs .. 96.66 μs)
+std dev              9.779 μs   (6.115 μs .. 16.54 μs)
+variance introduced by outliers: 84% (severely inflated)
+
+benchmarking main/small/thereAndBack-tuples
+time                 22.47 μs   (21.98 μs .. 22.99 μs)
+                     0.995 R²   (0.992 R² .. 0.998 R²)
+mean                 22.20 μs   (21.83 μs .. 22.90 μs)
+std dev              1.666 μs   (1.056 μs .. 2.776 μs)
+variance introduced by outliers: 76% (severely inflated)
+
+benchmarking main/small/thereAndBack-strict-pairs
+time                 14.14 μs   (13.82 μs .. 14.59 μs)
+                     0.994 R²   (0.990 R² .. 0.998 R²)
+mean                 14.22 μs   (13.98 μs .. 14.77 μs)
+std dev              1.233 μs   (745.4 ns .. 2.116 μs)
+variance introduced by outliers: 82% (severely inflated)
+
+benchmarking main/big/dividing-segment-tree-treemap
+time                 3.675 ms   (3.494 ms .. 3.903 ms)
+                     0.972 R²   (0.956 R² .. 0.986 R²)
+mean                 3.813 ms   (3.668 ms .. 4.024 ms)
+std dev              552.8 μs   (389.8 μs .. 765.1 μs)
+variance introduced by outliers: 79% (severely inflated)
+
+benchmarking main/big/dividing-finger-tree
+time                 13.05 ms   (12.39 ms .. 13.70 ms)
+                     0.983 R²   (0.966 R² .. 0.994 R²)
+mean                 13.09 ms   (12.75 ms .. 13.65 ms)
+std dev              1.144 ms   (671.8 μs .. 1.635 ms)
+variance introduced by outliers: 43% (moderately inflated)
+
+benchmarking main/big/dividing-split-tree
+time                 5.357 ms   (5.106 ms .. 5.683 ms)
+                     0.978 R²   (0.965 R² .. 0.993 R²)
+mean                 5.413 ms   (5.238 ms .. 5.634 ms)
+std dev              573.7 μs   (413.1 μs .. 785.1 μs)
+variance introduced by outliers: 64% (severely inflated)
+
+benchmarking main/big/scanning
+time                 2.143 ms   (2.075 ms .. 2.238 ms)
+                     0.987 R²   (0.978 R² .. 0.995 R²)
+mean                 2.150 ms   (2.104 ms .. 2.209 ms)
+std dev              176.9 μs   (129.6 μs .. 234.3 μs)
+variance introduced by outliers: 59% (severely inflated)
+
+benchmarking main/big/thereAndBack-tuples
+time                 350.0 μs   (339.6 μs .. 360.9 μs)
+                     0.991 R²   (0.986 R² .. 0.996 R²)
+mean                 356.8 μs   (348.6 μs .. 377.4 μs)
+std dev              40.30 μs   (21.75 μs .. 74.94 μs)
+variance introduced by outliers: 82% (severely inflated)
+
+benchmarking main/big/thereAndBack-strict-pairs
+time                 214.2 μs   (206.6 μs .. 221.4 μs)
+                     0.991 R²   (0.986 R² .. 0.995 R²)
+mean                 216.0 μs   (209.0 μs .. 230.0 μs)
+std dev              32.85 μs   (19.37 μs .. 55.65 μs)
+variance introduced by outliers: 91% (severely inflated)
+
+benchmarking main/huge/dividing-segment-tree-treemap
+time                 60.71 ms   (57.32 ms .. 63.49 ms)
+                     0.994 R²   (0.987 R² .. 0.998 R²)
+mean                 62.20 ms   (60.00 ms .. 67.32 ms)
+std dev              5.833 ms   (2.381 ms .. 9.806 ms)
+variance introduced by outliers: 32% (moderately inflated)
+
+benchmarking main/huge/dividing-finger-tree
+time                 173.7 ms   (146.1 ms .. 207.3 ms)
+                     0.969 R²   (0.938 R² .. 1.000 R²)
+mean                 154.3 ms   (148.5 ms .. 168.1 ms)
+std dev              12.77 ms   (3.444 ms .. 20.51 ms)
+variance introduced by outliers: 26% (moderately inflated)
+
+benchmarking main/huge/dividing-split-tree
+time                 145.7 ms   (82.55 ms .. 223.9 ms)
+                     0.733 R²   (0.625 R² .. 0.994 R²)
+mean                 94.74 ms   (81.91 ms .. 127.6 ms)
+std dev              33.45 ms   (5.955 ms .. 53.42 ms)
+variance introduced by outliers: 88% (severely inflated)
+
+benchmarking main/huge/scanning
+time                 35.15 ms   (31.10 ms .. 41.18 ms)
+                     0.929 R²   (0.851 R² .. 0.993 R²)
+mean                 32.33 ms   (30.65 ms .. 35.67 ms)
+std dev              4.575 ms   (2.201 ms .. 8.082 ms)
+variance introduced by outliers: 55% (severely inflated)
+
+benchmarking main/huge/thereAndBack-tuples
+time                 11.80 ms   (10.94 ms .. 13.16 ms)
+                     0.890 R²   (0.781 R² .. 0.992 R²)
+mean                 11.63 ms   (11.04 ms .. 12.79 ms)
+std dev              2.162 ms   (883.7 μs .. 3.407 ms)
+variance introduced by outliers: 81% (severely inflated)
+
+benchmarking main/huge/thereAndBack-strict-pairs
+time                 9.693 ms   (7.041 ms .. 12.61 ms)
+                     0.547 R²   (0.284 R² .. 0.852 R²)
+mean                 12.09 ms   (10.62 ms .. 14.87 ms)
+std dev              5.024 ms   (2.407 ms .. 7.474 ms)
+variance introduced by outliers: 96% (severely inflated)
+
+benchmarking main/sine/dividing-segment-tree-treemap
+time                 10.49 ms   (8.683 ms .. 12.21 ms)
+                     0.907 R²   (0.855 R² .. 0.963 R²)
+mean                 9.430 ms   (8.722 ms .. 10.73 ms)
+std dev              2.528 ms   (1.426 ms .. 3.826 ms)
+variance introduced by outliers: 89% (severely inflated)
+
+benchmarking main/sine/dividing-finger-tree
+time                 16.95 ms   (13.41 ms .. 20.83 ms)
+                     0.836 R²   (0.754 R² .. 0.932 R²)
+mean                 17.41 ms   (16.01 ms .. 18.77 ms)
+std dev              3.483 ms   (2.938 ms .. 4.058 ms)
+variance introduced by outliers: 81% (severely inflated)
+
+benchmarking main/sine/dividing-split-tree
+time                 10.45 ms   (9.742 ms .. 11.20 ms)
+                     0.969 R²   (0.948 R² .. 0.987 R²)
+mean                 10.15 ms   (9.827 ms .. 10.68 ms)
+std dev              1.091 ms   (782.7 μs .. 1.708 ms)
+variance introduced by outliers: 58% (severely inflated)
+
+benchmarking main/sine/scanning
+time                 2.483 ms   (2.329 ms .. 2.687 ms)
+                     0.955 R²   (0.933 R² .. 0.977 R²)
+mean                 2.672 ms   (2.541 ms .. 2.873 ms)
+std dev              538.7 μs   (394.9 μs .. 784.5 μs)
+variance introduced by outliers: 90% (severely inflated)
+
+benchmarking main/sine/thereAndBack-tuples
+time                 361.0 μs   (350.1 μs .. 374.6 μs)
+                     0.990 R²   (0.983 R² .. 0.996 R²)
+mean                 364.3 μs   (357.1 μs .. 378.0 μs)
+std dev              32.24 μs   (19.61 μs .. 54.57 μs)
+variance introduced by outliers: 74% (severely inflated)
+
+benchmarking main/sine/thereAndBack-strict-pairs
+time                 219.3 μs   (208.3 μs .. 230.5 μs)
+                     0.986 R²   (0.981 R² .. 0.994 R²)
+mean                 220.1 μs   (213.7 μs .. 231.1 μs)
+std dev              26.79 μs   (17.69 μs .. 45.44 μs)
+variance introduced by outliers: 85% (severely inflated)
+
