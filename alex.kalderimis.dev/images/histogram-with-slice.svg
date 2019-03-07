@@ -1,0 +1,54 @@
+<svg width="361.35" height="289.08" xmlns="http://www.w3.org/2000/svg">
+ <desc>R SVG Plot!</desc>
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <rect id="svg_1" fill="#FFFFFF" height="100%" width="100%"/>
+  <line id="svg_2" stroke="#000000" fill="#000000" fill-opacity="0" y2="264.08" x2="340.56" y1="264.08" x1="29.12"/>
+  <line id="svg_3" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="29.12" y1="264.08" x1="29.12"/>
+  <line id="svg_4" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="81.03" y1="264.08" x1="81.03"/>
+  <line id="svg_5" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="132.94" y1="264.08" x1="132.94"/>
+  <line id="svg_6" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="184.84" y1="264.08" x1="184.84"/>
+  <line id="svg_7" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="236.75" y1="264.08" x1="236.75"/>
+  <line id="svg_8" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="288.65" y1="264.08" x1="288.65"/>
+  <line id="svg_9" stroke="#000000" fill="#000000" fill-opacity="0" y2="268.25" x2="340.56" y1="264.08" x1="340.56"/>
+  <text id="svg_10" x="24.959999" y="279.910004" font-size="10">-3</text>
+  <text id="svg_11" x="76.449997" y="279.910004" font-size="10">-2</text>
+  <text id="svg_12" x="128.350006" y="279.910004" font-size="10">-1</text>
+  <text id="svg_13" x="182.089996" y="279.910004" font-size="10">0</text>
+  <text id="svg_14" x="234" y="279.910004" font-size="10">1</text>
+  <text id="svg_15" x="285.899994" y="279.910004" font-size="10">2</text>
+  <text id="svg_16" x="337.809998" y="279.910004" font-size="10">3</text>
+  <line id="svg_17" stroke="#000000" fill="#000000" fill-opacity="0" y2="35.73" x2="16.67" y1="264.08" x1="16.67"/>
+  <line id="svg_18" stroke="#000000" fill="#000000" fill-opacity="0" y2="264.08" x2="12.5" y1="264.08" x1="16.67"/>
+  <line id="svg_19" stroke="#000000" fill="#000000" fill-opacity="0" y2="218.41" x2="12.5" y1="218.41" x1="16.67"/>
+  <line id="svg_20" stroke="#000000" fill="#000000" fill-opacity="0" y2="172.74" x2="12.5" y1="172.74" x1="16.67"/>
+  <line id="svg_21" stroke="#000000" fill="#000000" fill-opacity="0" y2="127.07" x2="12.5" y1="127.07" x1="16.67"/>
+  <line id="svg_22" stroke="#000000" fill="#000000" fill-opacity="0" y2="81.4" x2="12.5" y1="81.4" x1="16.67"/>
+  <line id="svg_23" stroke="#000000" fill="#000000" fill-opacity="0" y2="35.73" x2="12.5" y1="35.73" x1="16.67"/>
+  <text id="svg_24" x="9.17" y="266.829987" font-size="10" transform="rotate(-90 9.170000076294004,266.8299865722657) ">0</text>
+  <text id="svg_25" x="9.17" y="221.160004" font-size="10" transform="rotate(-90 9.170000076293976,221.1600036621094) ">5</text>
+  <text id="svg_26" x="9.17" y="178.240005" font-size="10" transform="rotate(-90 9.170000076293976,178.2400054931641) ">10</text>
+  <text id="svg_27" x="9.17" y="132.570007" font-size="10" transform="rotate(-90 9.170000076293976,132.57000732421878) ">15</text>
+  <text id="svg_28" x="9.17" y="86.900002" font-size="10" transform="rotate(-90 9.170000076293961,86.90000152587892) ">20</text>
+  <text id="svg_29" x="9.17" y="41.23" font-size="10" transform="rotate(-90 9.170000076293954,41.229999542236335) ">25</text>
+  <polygon id="svg_30" stroke="#000000" fill="#ADD8E6" points="29.12 , 264.08 29.12 , 254.95 55.08 , 254.95 55.08 , 264.08 "/>
+  <polygon id="svg_31" stroke="#000000" fill="#ADD8E6" points="55.08 , 264.08 55.08 , 245.81 81.03 , 245.81 81.03 , 264.08 "/>
+  <polygon id="svg_32" stroke="#000000" fill="#ADD8E6" points="81.03 , 264.08 81.03 , 218.41 106.98 , 218.41 106.98 , 264.08 "/>
+  <polygon id="svg_33" stroke="#000000" fill="#ADD8E6" points="106.98 , 264.08 106.98 , 154.47 132.94 , 154.47 132.94 , 264.08 "/>
+  <polygon id="svg_34" stroke="#000000" fill="#ADD8E6" points="132.94 , 264.08 132.94 , 172.74 158.89 , 172.74 158.89 , 264.08 "/>
+  <polygon id="svg_35" stroke="#000000" fill="#ADD8E6" points="158.89 , 264.08 158.89 , 90.54 184.84 , 90.54 184.84 , 264.08 "/>
+  <polygon id="svg_36" stroke="#000000" fill="#ADD8E6" points="184.84 , 264.08 184.84 , 17.47 210.79 , 17.47 210.79 , 264.08 "/>
+  <polygon id="svg_37" stroke="#000000" fill="#ADD8E6" points="210.79 , 264.08 210.79 , 145.34 236.75 , 145.34 236.75 , 264.08 "/>
+  <polygon id="svg_38" stroke="#000000" fill="#ADD8E6" points="236.75 , 264.08 236.75 , 209.28 262.70 , 209.28 262.70 , 264.08 "/>
+  <polygon id="svg_39" stroke="#000000" fill="#ADD8E6" points="262.70 , 264.08 262.70 , 227.54 288.65 , 227.54 288.65 , 264.08 "/>
+  <polygon id="svg_40" stroke="#000000" fill="#ADD8E6" points="288.65 , 264.08 288.65 , 264.08 314.61 , 264.08 314.61 , 264.08 "/>
+  <polygon id="svg_41" stroke="#000000" fill="#ADD8E6" points="314.61 , 264.08 314.61 , 254.95 340.56 , 254.95 340.56 , 264.08 "/>
+  <polyline id="svg_42" stroke="#000000" fill="#000000" fill-opacity="0" points="15.670000076293945,264.0799865722656 352.0199890136719,264.0799865722656 352.0199890136719,8.329999923706055 15.670000076293945,8.329999923706055 15.670000076293945,264.0799865722656 "/>
+  <rect stroke="#000" opacity="0.75" stroke-dasharray="2,2" id="svg_43" height="17" width="331.999993" y="154.437499" x="18.999999" stroke-width="1.5" fill="#FFAFCC"/>
+ </g>
+</svg>
