@@ -27,6 +27,18 @@ tocCompiler = do
     readAlignment (Just "off"  ) = TOC.Disabled
     readAlignment _       = TOC.Disabled
 
+pandocFeedCompiler :: Compiler (Item String)
+pandocFeedCompiler =
+  pandocCompilerWithTransform readerOptions noMathWriter id
+  where noMathWriter = writerOptions { writerHTMLMathMethod = PlainMath }
+
+writerOptions :: WriterOptions
+writerOptions = defaultHakyllWriterOptions
+  { writerHTMLMathMethod = MathJax ""
+  }
+
+readerOptions :: ReaderOptions
+readerOptions = defaultHakyllReaderOptions
 
   
 

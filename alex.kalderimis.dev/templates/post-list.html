@@ -1,7 +1,22 @@
-<ul class="posts">
+<section class="posts">
     $for(posts)$
-        <li>
-            <a href="$url$">$title$</a> - $date$
-        </li>
+        <article>
+          <header class="entry-header">
+              <h3 class="entry-title">
+                  <a href="$url$">$title$</a>
+              </h3>
+          </header>
+          <section class="entry-meta">
+            $if(description)$
+              $description$
+            $endif$
+            <span class="date">$date$</span>
+          </section>
+          <ul class="entry-tags">
+            $for(postTags)$
+              <li>$tag$</li>
+            $endfor$
+          </ul>
+        </article>
     $endfor$
-</ul>
+</section>

@@ -9,11 +9,13 @@ import Data.Default (def)
 import System.Process (readProcess)
 
 import Site.Contexts
-import Site.Pandoc (tocCompiler)
+import Site.Feed
+import Site.Pandoc (pandocFeedCompiler, tocCompiler)
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
+    let postsPattern = "posts/*"
 
     match "images/*" $ do
         route   idRoute
@@ -27,13 +29,13 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
-    match (fromList ["about.rst", "contact.markdown"]) $ do
+    match (fromList ["about.md", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" baseContext
             >>= relativizeUrls
 
-    match "posts/*" $ do
+    match postsPattern $ do
         route $ setExtension "html"
         compile $ tocCompiler
             >>= (\(doc, toc) -> loadAndApplyTemplate "templates/post.html"
@@ -43,31 +45,25 @@ main = hakyll $ do
 
     create ["archive.html"] $ do
         route idRoute
-        compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
-            let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
-                    defaultContext
-
-            makeItem ""
-                >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
-                >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+        let ctx = archiveCtx postsPattern
+        compile $ makeItem ""
+                >>= loadAndApplyTemplate "templates/archive.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx
                 >>= relativizeUrls
 
     create ["404.html"] $ do
-      let fields = customTitleField "Not Found" <> defaultContext
+      let fields = customTitleField "Not Found" <> baseContext
       route idRoute
       compile $ makeItem ""
-          >>= loadAndApplyTemplate "templates/404.html" defaultContext
+          >>= loadAndApplyTemplate "templates/404.html" baseContext
           >>= loadAndApplyTemplate "templates/default.html" fields
 
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
+            posts <- recentFirst =<< loadAll (postsPattern .&&. hasNoVersion)
             let indexCtx = listField "posts" postCtx (return posts)
-                         <> defaultContext
+                         <> baseContext
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
@@ -76,10 +72,7 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
+    match postsPattern . version "feed" $ compile pandocFeedCompiler
 
---------------------------------------------------------------------------------
-postCtx :: Context String
-postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
-    defaultContext
+    createFeed postsPattern
 

@@ -1,0 +1,27 @@
+image: sakshamsharma/docker-hakyll
+
+cache:
+    paths:
+        - .stack-work/
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - npm install netlify-cli -g
+  - stack install --only-dependencies
+
+test:
+  script:
+    - stack test
+
+build:
+  script:
+    - stack build
+
+deploy: 
+  script:
+    - netlify deploy --prod --dir=_site
+

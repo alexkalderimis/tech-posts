@@ -1,6 +1,7 @@
 ---
 title: Goldilocks Rectangle - finding a better solution 
-published: false
+draft: false
+published: 2019-02-27
 description: Three different ways to solve a problem in a functional language,
              with some discussion of the pros and cons of each approach.
 tags: haskell, algorithms, functional programming
@@ -49,7 +50,7 @@ import Data.Maybe
 
 Others will be discussed where required.
 
-# Solution 1.
+# Solution 1.
 
 For the first solution, let's just think about taking a horizontal slice across
 the histogram at different heights:
@@ -518,7 +519,7 @@ building up the search tree, then performing _N_ splits, which each take
  _O(logn)_ operations. We also get to benefit from _O(1)_ size operations
 when calculating the base-case, which is nice.
 
-## Summing it Up
+## Summing it Up
 
 While the stack based solution is the right approach if we absolutely must
 optimise for speed, it suffers in terms of maintainability and clarity. It also
@@ -529,7 +530,7 @@ from clarity seems to me to make this the Goldilocks option in this case.
 
 # Post-Script(s)
 
-## A generic divide and conquer
+## A generic divide and conquer
 
 What if we want to support multiple search trees? We we could define that as
 a typeclass. Since we 
@@ -668,129 +669,60 @@ example benchmark run is available [here][benchmark]. The benchmarks are not
 super thorough, and are run on a cyclic input of either 1,000 elements, or
 10,000 elements. The results are enlightening though:
 
-| Approach                        | Complexity    | Small | Big | Big Sine |
-| ------------------------------- | ------------- | -----:| ---:| --------:|
-| naive                           | right-aligned | $1600 |
-| naive with nub                  | centered      |   $12 |
-| inits-and-tails                 | are neat      |    $1 |
-| recursive - minimum with span   | are neat      |    $1 |
-| recursive - custom segment tree | are neat      |    $1 |
-| recursive - finger tree         | are neat      |    $1 |
-| stack                           | right-aligned | $1600 |
+| Approach                         | Complexity    | Small (1k) | Big (10k) | Big Sine |
+| -------------------------------- | ------------- | ----------:| ---------:| --------:|
+| naive                            | _O(n²)_       | 56.01 ms   | 6.033 s   | 5.646 s  |
+| naive with nub                   | _O(n²)_       | 633.0 μs   | 6.768 ms  | 1.115 s  |
+| inits-and-tails                  | _O(n²)_       | 5.808 ms   | 703.6 ms  | 770.8 ms |
+| recursive - minimum with span    | _O(n²)    _   | 465.4 μs   | 25.80 ms  | 531.1 ms |
+| recursive - custom tree, treemap | _O(n.logn)_   | 332.3 μs   | 7.296 ms  | 16.42 ms |
+| recursive - custom tree, foldmap | _O(n.logn)_   | 320.1 μs   | 5.944 ms  | 1.829 s  |
+| recursive - finger tree          | _O(n.logn)_   | 1.530 ms   | 19.00 ms  | 27.70 ms |
+| stack                            | _O(n)_        | 30.89 μs   | 317.0 μs  | 334.2 μs |
 
-```
-benchmarking main/small/naive
-time                 58.02 ms   (55.92 ms .. 60.93 ms)
-                     0.995 R²   (0.986 R² .. 0.999 R²)
-mean                 56.01 ms   (54.83 ms .. 57.35 ms)
-std dev              2.511 ms   (1.854 ms .. 3.475 ms)
-variance introduced by outliers: 15% (moderately inflated)
+There are a lot of take-aways from this set of benchmarks, and not all of it was
+immediately obvious - at least not to me.
 
-benchmarking main/small/nubbing-naive
-time                 633.0 μs   (613.3 μs .. 656.8 μs)
-                     0.990 R²   (0.984 R² .. 0.997 R²)
-mean                 642.1 μs   (627.5 μs .. 676.6 μs)
-std dev              74.22 μs   (44.84 μs .. 137.0 μs)
-variance introduced by outliers: 80% (severely inflated)
+* Input matters
 
-benchmarking main/small/initsAndTails
-time                 5.749 ms   (5.555 ms .. 5.967 ms)
-                     0.990 R²   (0.983 R² .. 0.996 R²)
-mean                 5.808 ms   (5.684 ms .. 6.013 ms)
-std dev              468.2 μs   (301.9 μs .. 731.9 μs)
-variance introduced by outliers: 50% (moderately inflated)
+  The _big_ and _big sine_ inputs have the same number of data-points, but differ in their shape,
+  wave-length and period. For some approaches this has very little effect (the naive approach,
+  and the stack-based approach are not sensitive to this), but the other approaches are
+  significantly affected, although to quite different degrees. Coping with typical and
+  pathological/friendly input makes a big difference.
 
-benchmarking main/small/dividing-split-with-span
-time                 466.7 μs   (456.2 μs .. 477.9 μs)
-                     0.995 R²   (0.992 R² .. 0.998 R²)
-mean                 465.4 μs   (457.8 μs .. 476.9 μs)
-std dev              31.29 μs   (21.18 μs .. 47.92 μs)
-variance introduced by outliers: 59% (severely inflated)
+* The basic solution can be fast enough
 
-benchmarking main/small/dividing-segment-tree-treemap
-time                 331.8 μs   (324.8 μs .. 339.0 μs)
-                     0.996 R²   (0.993 R² .. 0.998 R²)
-mean                 332.3 μs   (326.6 μs .. 343.1 μs)
-std dev              24.31 μs   (17.31 μs .. 37.28 μs)
-variance introduced by outliers: 65% (severely inflated)
+  All the approaches are just fine for even moderately sized inputs - sweating the small
+  performance gains is just not going to be worth it.
 
-benchmarking main/small/dividing-segment-tree-foldmap
-time                 317.7 μs   (309.6 μs .. 327.2 μs)
-                     0.993 R²   (0.988 R² .. 0.997 R²)
-mean                 320.1 μs   (313.4 μs .. 332.9 μs)
-std dev              31.18 μs   (18.01 μs .. 54.10 μs)
-variance introduced by outliers: 78% (severely inflated)
+* Simple optimisation can produce massive wins
 
-benchmarking main/small/dividing-finger-tree
-time                 1.494 ms   (1.447 ms .. 1.553 ms)
-                     0.986 R²   (0.977 R² .. 0.994 R²)
-mean                 1.530 ms   (1.487 ms .. 1.605 ms)
-std dev              201.1 μs   (136.2 μs .. 329.2 μs)
-variance introduced by outliers: 82% (severely inflated)
+  Just nubbing the input makes a massive performance improvement for the naive approach. While this
+  algorithm is still much slower than the others, for the speed of development, it remains
+  pretty acceptable up to even large inputs - it is 1,000 times faster than the un-nubbed version,
+  and completes the big data-set faster than some of the smarter approaches. This advantage
+  disappears when faced with a less friendly data-set though.
 
-benchmarking main/small/stacking
-time                 30.25 μs   (29.45 μs .. 31.12 μs)
-                     0.994 R²   (0.992 R² .. 0.997 R²)
-mean                 30.89 μs   (30.06 μs .. 32.03 μs)
-std dev              3.254 μs   (2.183 μs .. 4.359 μs)
-variance introduced by outliers: 86% (severely inflated)
+* Choosing the right fold can make a world of difference
 
-benchmarking main/big/naive
-time                 6.061 s    (5.371 s .. 6.679 s)
-                     0.998 R²   (0.994 R² .. 1.000 R²)
-mean                 6.033 s    (5.972 s .. 6.146 s)
-std dev              110.7 ms   (2.229 ms .. 138.9 ms)
-variance introduced by outliers: 19% (moderately inflated)
+  When the next minimum is close to the left-hand-side of the data-set, `foldMap` works fine for
+  producing a good search tree. However, when the data-set is less friendly, `treeMap` really
+  shines, avoiding the spectacular blowup faced by the `foldMap`ed tree with the sine wave.
 
-benchmarking main/big/nubbing-naive
-time                 6.706 ms   (6.432 ms .. 7.006 ms)
-                     0.987 R²   (0.978 R² .. 0.994 R²)
-mean                 6.768 ms   (6.597 ms .. 7.041 ms)
-std dev              624.6 μs   (359.4 μs .. 1.002 ms)
-variance introduced by outliers: 54% (severely inflated)
+* Don't be afraid to reimplement
 
-benchmarking main/big/initsAndTails
-time                 713.5 ms   (684.7 ms .. 746.6 ms)
-                     1.000 R²   (1.000 R² .. NaN R²)
-mean                 703.6 ms   (687.7 ms .. 711.7 ms)
-std dev              15.09 ms   (3.523 ms .. 18.75 ms)
-variance introduced by outliers: 19% (moderately inflated)
+  Finger-trees are awesome general purpose data-structures, and are capable of implementing a
+  wide variety of different things. They are seldom the best in class though - there are faster
+  interval maps, faster heaps, and as you can see here, faster segment trees there to be used.
+  Just as interesting is the small amount of code that was needed to produce something that
+  out-performed finger-trees.
 
-benchmarking main/big/dividing-split-with-span
-time                 25.68 ms   (25.14 ms .. 26.44 ms)
-                     0.998 R²   (0.996 R² .. 0.999 R²)
-mean                 25.80 ms   (25.47 ms .. 26.22 ms)
-std dev              864.1 μs   (599.0 μs .. 1.174 ms)
+* You just can beat linear scans
 
-benchmarking main/big/dividing-segment-tree-treemap
-time                 7.393 ms   (7.046 ms .. 7.760 ms)
-                     0.981 R²   (0.967 R² .. 0.993 R²)
-mean                 7.296 ms   (7.116 ms .. 7.619 ms)
-std dev              676.9 μs   (416.5 μs .. 1.072 ms)
-variance introduced by outliers: 53% (severely inflated)
-
-benchmarking main/big/dividing-segment-tree-foldmap
-time                 5.942 ms   (5.706 ms .. 6.217 ms)
-                     0.984 R²   (0.973 R² .. 0.993 R²)
-mean                 5.944 ms   (5.801 ms .. 6.249 ms)
-std dev              584.2 μs   (341.8 μs .. 987.8 μs)
-variance introduced by outliers: 59% (severely inflated)
-
-benchmarking main/big/dividing-finger-tree
-time                 18.96 ms   (17.94 ms .. 20.18 ms)
-                     0.986 R²   (0.972 R² .. 0.995 R²)
-mean                 19.00 ms   (18.41 ms .. 19.91 ms)
-std dev              1.742 ms   (1.097 ms .. 2.755 ms)
-variance introduced by outliers: 44% (moderately inflated)
-
-benchmarking main/big/stacking
-time                 320.6 μs   (308.7 μs .. 333.4 μs)
-                     0.990 R²   (0.987 R² .. 0.995 R²)
-mean                 317.0 μs   (309.7 μs .. 325.7 μs)
-std dev              27.13 μs   (21.42 μs .. 34.32 μs)
-variance introduced by outliers: 72% (severely inflated)
-```
-
+  If you need the best, you just can't beat a low-level linear scan. But as good as it is, the
+  divide-and-conquer approaches are more than fast enough for most people's needs, if you cannot
+  find a linear scan that works for you.
 
 # picture credits:
 

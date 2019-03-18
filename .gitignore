@@ -7,3 +7,4 @@ target
 _cache
 _site
 tech-posts.cabal
+.DS_Store

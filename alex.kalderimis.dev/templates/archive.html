@@ -1,2 +1,18 @@
-Here you can find all my previous posts:
-$partial("templates/post-list.html")$
+$for(archives)$
+  <h2 class="archive-year">$year$</h2>
+  <ul class="archive">
+  $for(items)$
+    <li class="archive-item">
+      <a class="item-link" href="$url$">
+        <h3 class="entry-title">$title$</h3>
+        <section class="entry-meta">
+          $if(description)$
+            $description$
+          $endif$
+          <span class="date">$dateArchive$</span>
+        </section>
+      </a>
+    </li>
+  $endfor$
+  </ul>
+$endfor$

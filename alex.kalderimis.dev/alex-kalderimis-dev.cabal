@@ -15,8 +15,12 @@ executable site
                   , blaze-html
                   , pandoc-types
                   , text
+                  , pureMD5
+                  , time
+                  , time-locale-compat
   ghc-options:      -threaded
   default-language: Haskell2010
   other-modules: Site.Contexts
                  Site.TOC
                  Site.Pandoc
+                 Site.Feed
