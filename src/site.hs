@@ -1,12 +1,7 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid
-import           Hakyll
 
-import Text.Pandoc.Extensions (enableExtension, Extension(..))
-import Text.Pandoc.Options (ReaderOptions(readerExtensions))
-import Data.Default (def)
-import System.Process (readProcess)
+import           Hakyll
 
 import Site.Contexts
 import Site.Feed

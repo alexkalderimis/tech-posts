@@ -2,6 +2,7 @@
 
 module Site.Contexts where
 
+import Data.Char (toLower)
 import Data.Function (on)
 import Data.List (groupBy)
 import Control.Applicative
@@ -62,8 +63,16 @@ customTitleField = constField "pageTitle"
 
 postTags :: Context a
 postTags = listField "postTags"
-  (field "tag" (pure . itemBody))
+  (field "tag" tagc <> field "tagLink" (fmap slugify . tagc))
   (getUnderlying >>= getTags >>= mapM makeItem)
+  where
+    tagc = pure . itemBody
+
+slugify :: String -> String
+slugify = fmap (toLower . despace)
+  where
+    despace ' ' = '-'
+    despace c = c
 
 groupedArchives :: Pattern -> Compiler [Item (Integer, [Item String])]
 groupedArchives pat =

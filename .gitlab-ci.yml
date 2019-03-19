@@ -1,4 +1,4 @@
-image: sakshamsharma/docker-hakyll
+image: sakshamsharma/docker-hakyll:v3
 
 cache:
     paths:
