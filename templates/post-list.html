@@ -1,6 +1,7 @@
 <section class="posts">
     $for(posts)$
         <article>
+          <!-- meta: $tags$ -->
           <header class="entry-header">
               <h3 class="entry-title">
                   <a href="$url$">$title$</a>
@@ -10,11 +11,11 @@
             $if(description)$
               $description$
             $endif$
-            <span class="date">$date$</span>
+            <time class="date">$date$</time>
           </section>
           <ul class="entry-tags">
             $for(postTags)$
-              <li><a href="$tagLink$">$tag$</a></li>
+              <li><a href="$href$">$tag$</a></li>
             $endfor$
           </ul>
         </article>

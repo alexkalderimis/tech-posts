@@ -3,16 +3,9 @@ module Site.Pandoc where
 import qualified Site.TOC as TOC
 
 import Text.Pandoc
-import Text.Pandoc.Walk (walk)
-import Data.Maybe (fromMaybe)
 
 import Hakyll.Web.Pandoc
 import Hakyll (Item(..), Compiler, Context, constField, getMetadataField, getUnderlying, getResourceBody)
-
-import Text.Blaze.Html (preEscapedToHtml, (!))
-import Text.Blaze.Html.Renderer.String (renderHtml)
-import qualified Text.Blaze.Html5 as H
-import qualified Text.Blaze.Html5.Attributes as A
 
 tocCompiler :: Compiler (Item String, Context a)
 tocCompiler = do
@@ -39,6 +32,4 @@ writerOptions = defaultHakyllWriterOptions
 
 readerOptions :: ReaderOptions
 readerOptions = defaultHakyllReaderOptions
-
-  
 

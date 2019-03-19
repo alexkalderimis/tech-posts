@@ -32,9 +32,10 @@ executables:
   site:
     main: site.hs
     source-dirs: src/
+    ghc-options:
+      - -threaded
 
 ghc-options:
   - -Wall
   - -fwarn-tabs
   - -fwarn-incomplete-uni-patterns
-  - -threaded

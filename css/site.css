@@ -519,7 +519,7 @@ h1.name {
 h1.name .stamp {
   padding-top: 0.5em;
   font-family: 'Major Mono Display', monospace;
-  font-size: 19px;
+  font-size: 18px;
 }
 
 h1.name .motto {
@@ -2267,6 +2267,10 @@ body:not(.twentyseventeen-front-page) .entry-header {
 	padding: 2em 0;
 }
 
+.entry-footer a {
+        margin-right: 1em;
+}
+
 .entry-footer .cat-links,
 .entry-footer .tags-links {
 	display: block;
@@ -3337,6 +3341,12 @@ p > object:only-child {
 	}
 }
 @media screen and (min-width: 450px) {
+
+        h1.name .stamp {
+          font-size: 22px;
+        }
+}
+@media screen and (min-width: 500px) {
 
         h1.name .stamp {
           font-size: 24px;

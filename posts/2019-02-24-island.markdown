@@ -31,7 +31,8 @@ We need to decide what the `Op` is. The most straightforward approach is a
 sum-type with a constructor for each of the four operations we need, so:
 
 ```haskell
-data Op = Is | Isnt | Gt | Lt deriving (Show, Eq)
+data Op = Is | Isnt | Gt | Lt
+  deriving (Show, Eq)
 ```
 
 However, when a claimant is lying, it is not that we gain _no_ information,
@@ -41,7 +42,10 @@ _X is not 17_. The same goes for `>` and `<`, but with the caveat that these
 require the `>=` and `<=` operators to convey the inverses.
 
 ```haskell
-data Op = Is | Isnt | Gt | Gte | Lt | Lte deriving (Show, Eq, Ord)
+data Op = Is | Isnt
+        | Gt | Gte
+        | Lt | Lte
+  deriving (Show, Eq, Ord)
 
 invert :: Op -> Op
 invert Is   = Isnt
@@ -82,22 +86,23 @@ it appears pretty similar to the problem statement itself.
 ```haskell
 -- the islanders in the problem, with their claims
 islanders :: [Claimant]
-islanders = ['a' `saysThat` ['b' ==> (Gt, 20)
-                            ,'d' ==> (Gt, 16)
-                            ]
-            ,'b' `saysThat` ['c' ==> (Gt, 18)
-                            ,'e' ==> (Lt, 20)
-                            ]
-            ,'c' `saysThat` ['d' ==> (Lt, 22)
-                            ,'a' ==> (Is, 19)
-                            ]
-            ,'d' `saysThat` ['e' ==> (Isnt, 17)
-                            ,'b' ==> (Is, 20)
-                            ]
-            ,'e' `saysThat` ['a' ==> (Gt, 21)
-                            ,'c' ==> (Lt, 18)
-                            ]
-            ]
+islanders =
+  ['a' `saysThat` ['b' ==> (Gt, 20)
+                  ,'d' ==> (Gt, 16)
+                  ]
+  ,'b' `saysThat` ['c' ==> (Gt, 18)
+                  ,'e' ==> (Lt, 20)
+                  ]
+  ,'c' `saysThat` ['d' ==> (Lt, 22)
+                  ,'a' ==> (Is, 19)
+                  ]
+  ,'d' `saysThat` ['e' ==> (Isnt, 17)
+                  ,'b' ==> (Is, 20)
+                  ]
+  ,'e' `saysThat` ['a' ==> (Gt, 21)
+                  ,'c' ==> (Lt, 18)
+                  ]
+  ]
   where saysThat who cs = Claimant who (S.fromList cs)
         (==>) = (,)
 ```
@@ -124,9 +129,9 @@ represent them:
 data InclusiveRange = Maybe Int :..: Maybe Int
   deriving (Show, Eq)
 
-newtype Implication = OneOf { ranges :: NonEmpty InclusiveRange }
-  -- deriving Semigroup makes 'or'-ing ranges easy
-  deriving (Show, Eq, Semigroup)
+newtype Implication = OneOf
+  { ranges :: NonEmpty InclusiveRange
+  } deriving (Show, Eq, Semigroup)
 ```
 
 We can then go ahead and write smart constructors for the different implications

@@ -2,18 +2,18 @@
 
 module Site.Contexts where
 
-import Data.Char (toLower)
-import Data.Function (on)
-import Data.List (groupBy)
-import Control.Applicative
-import           Data.Monoid
 import           Hakyll
-import System.Process (readProcess)
-import Data.Digest.Pure.MD5 (md5)
 
-import Data.Time.Locale.Compat (defaultTimeLocale)
-import Data.Time.Clock
-import Data.Time.Calendar
+import           Control.Applicative
+import           Data.Char               (toLower)
+import           Data.Digest.Pure.MD5    (md5)
+import           Data.Function           (on)
+import           Data.List               (groupBy)
+import           System.Process          (readProcess)
+
+import           Data.Time.Calendar
+import           Data.Time.Clock
+import           Data.Time.Locale.Compat (defaultTimeLocale)
 
 repo :: String
 repo = "https://github.com/alexkalderimis/tech-post"
@@ -36,10 +36,17 @@ postCtx = mconcat
   [ dateField "date" "%B %e, %Y"
   , dateField "dateArchive" "%b %e"
   , gitTag "git"
-  , postTags
+  , postTags "postTags"
   , draftField "isDraft"
+  , debugMetaField
   , baseContext
   ]
+
+debugMetaField :: Context a
+debugMetaField = field "meta" $ \item -> do
+  let ident = itemIdentifier item
+  meta <- getMetadata ident
+  pure (show meta)
 
 draftField :: String -> Context a
 draftField key = field key $ \item -> do
@@ -53,7 +60,7 @@ gitTag :: String -> Context String
 gitTag key = field key $ \_ -> unsafeCompiler $ do
     sha     <- readProcess "git" ["log", "-1", "HEAD", "--pretty=format:%H"] []
     message <- readProcess "git" ["log", "-1", "HEAD", "--pretty=format:%s"] []
-    return $ mconcat ["<a href=\"", repo, "/commit/", sha
+    return $ mconcat [ "<a href=\"", repo, "/commit/", sha
                      , "\" title=\"", message, "\">"
                      , take 8 sha, "</a>"
                      ]
@@ -61,9 +68,10 @@ gitTag key = field key $ \_ -> unsafeCompiler $ do
 customTitleField :: String -> Context String
 customTitleField = constField "pageTitle"
 
-postTags :: Context a
-postTags = listField "postTags"
-  (field "tag" tagc <> field "tagLink" (fmap slugify . tagc))
+postTags :: String -> Context a
+postTags k = listField k
+  -- (field "tag" tagc)
+  (field "tag" tagc <> field "href" (fmap slugify . tagc))
   (getUnderlying >>= getTags >>= mapM makeItem)
   where
     tagc = pure . itemBody
@@ -72,7 +80,7 @@ slugify :: String -> String
 slugify = fmap (toLower . despace)
   where
     despace ' ' = '-'
-    despace c = c
+    despace c   = c
 
 groupedArchives :: Pattern -> Compiler [Item (Integer, [Item String])]
 groupedArchives pat =
