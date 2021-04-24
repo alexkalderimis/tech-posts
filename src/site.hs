@@ -31,14 +31,6 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" baseContext
             >>= relativizeUrls
 
-    matchMetadata postsPattern published $ do
-        route $ setExtension "html"
-        compile $ tocCompiler
-            >>= (\(doc, toc) -> loadAndApplyTemplate "templates/post.html"
-                                                    (toc <> postCtx) doc)
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
-            >>= relativizeUrls
-
     create ["archive.html"] $ do
         route idRoute
         let ctx = archiveCtx postsPattern
@@ -68,14 +60,24 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
+    matchMetadata postsPattern published compileFeedEntry
     matchMetadata postsPattern published compilePost
 
     createFeed postsPattern
 
 -- helpers:
 
+compileFeedEntry :: Rules ()
+compileFeedEntry = version "feed" $ compile pandocFeedCompiler
+
 compilePost :: Rules ()
-compilePost = version "feed" $ compile pandocFeedCompiler
+compilePost = do
+  route $ setExtension "html"
+  compile $ tocCompiler
+      >>= (\(doc, toc) -> loadAndApplyTemplate "templates/post.html"
+                                              (toc <> postCtx) doc)
+      >>= loadAndApplyTemplate "templates/default.html" postCtx
+      >>= relativizeUrls
 
 published :: MD.Metadata -> Bool
 published = (== Just "true") . MD.lookupString "published"

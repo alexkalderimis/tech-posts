@@ -16,9 +16,9 @@ feedConf = FeedConfiguration
   }
 
 createFeed :: Pattern -> Rules ()
-createFeed postsPattern = create ["atom.xml"] $ do
+createFeed p = create ["atom.xml"] $ do
   route idRoute
   compile $ do
-    loadAll (postsPattern .&&. hasVersion "feed")
+    loadAll (p .&&. hasVersion "feed")
       >>= fmap (take 10) . recentFirst
       >>= renderAtom feedConf (postCtx <> bodyField "description")

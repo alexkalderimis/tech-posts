@@ -2,7 +2,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE BangPatterns #-}
 
-import           Control.Applicative
 import           Data.Monoid
 import           Data.Ord
 import           Data.Semigroup
@@ -14,6 +13,7 @@ import qualified Data.FingerTree     as T
 
 import           Criterion.Main      (bench, bgroup, defaultMain, env, whnf)
 
+setupEnv :: IO ([Int], [Int])
 setupEnv = do
   let bars  = cycle (profile <> basin <> basin2 <> basin3)
       k = 1000.0 :: Double
@@ -23,6 +23,7 @@ setupEnv = do
             . fromIntegral <$> [(0 :: Int) ..]
   return (take 100000 bars, take 100000 sine)
 
+main :: IO ()
 main = defaultMain [
    env setupEnv $ \ ~(bars, sine) -> bgroup "main" [
    bgroup "tiny"  (group $ take    100 bars)
