@@ -16,19 +16,25 @@ stages:
 before_script:
   - stack install --only-dependencies
 
-test:
-  script:
-    - stack test
-
-build:
+stack-build:
+  stage: build
+  needs: []
   script:
     - stack build
 
-deploy: 
+test:
+  needs:
+    - stack-build
+  script:
+    - stack test
+
+deploy-to-netlify: 
+  stage: deploy
+  needs:
+    - build
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: manual
   script:
     - npm install netlify-cli -g
     - netlify deploy --prod --dir=_site
-
