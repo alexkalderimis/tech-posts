@@ -192,10 +192,10 @@ know how to deal with lies.
 
 In some ways this puzzle is like solving an equation by dividing by a common
 factor. When we know that one of the factors in `1` we don't even have to do
-that, since `(x * 1)` and `(1 * x)` both equal `x`, just as `(f . id)` and `(id
-. f)` both equal `f`. It is almost surprising that we can use such simple
+that, since `(x * 1)` and `(1 * x)` both equal `x`, just as `(f . id)` and `(id . f)`
+both equal `f`. It is almost surprising that we can use such simple
 equational reasoning to reason about functions in the exact same way we reason
-about numbers, and is an example of laws are important.
+about numbers, and is an example of why laws are important.
 
 Category Theoretical Post-Script
 ==================================
