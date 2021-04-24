@@ -12,6 +12,16 @@ that does some good in the world.
 This blog is a place for random thoughts and musings on things that interest
 me, mostly of a technical nature.
 
+Work
+----------
+
+At [GitLab](https://gitlab.com) as a senior backend developer, I am a
+maintainer of [GitLab Rails](https://gitlab.com/gitlab-org/gitlab) currently
+building the future of work.
+
+I have a particular interest in reliable, scalable and composable APIs, with
+a particular focus on GraphQL.
+
 The Site
 ----------
 
