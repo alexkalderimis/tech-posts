@@ -202,9 +202,10 @@ Category Theoretical Post-Script
 
 Some people may even have heard of the description of a Monad as a "Monoid in
 the Category of Endofunctors", well "A Monoid in the Category of Endofunctors"
-is amusingly exactly the situation at hand. The functions `identity` and `not`
-are Endofunctors, being functions from `Bool -> Bool`. And they form a category
-that composes with `(.)` and has the identity `id`, or equivalently, they are
-are a Monoid where `mappend` is `(.)` and `mempty` is `id. So we can use either
-set of laws, to show that we can factor out the identity element, i.e. the
-truth-telling guard, leaving us with just the liar.
+is not quite what we have here, but this is a monoid of endofunctors! The
+functions `identity` and `not` are Endofunctors, being functions from `Bool -> Bool`.
+And they form a category that composes with `(.)` and has the identity
+`id`, or equivalently, they are are a Monoid where `mappend` is `(.)` and
+`mempty` is `id. So we can use either set of laws, to show that we can factor
+out the identity element, i.e. the truth-telling guard, leaving us with just the
+liar.
