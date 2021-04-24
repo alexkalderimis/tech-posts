@@ -1,6 +1,6 @@
 ---
 title: Continuous deployment to Netlify from GitLab CI
-published: false
+published: true
 description: 
 tags: haskell, netlify, ci, gitlab
 ---
@@ -67,12 +67,14 @@ need caching to speed builds up. We are going to cache the stack build results,
 as well as the built site itself:
 
 ```yaml
-stages:
-  - build
-  - deploy
-
 variables:
   STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
+  
+cache:
+  paths:
+    - .stack-work/
+    - .stack-root/
+    - _site
 ```
 
 We use the variable to ensure the stack directories are in a predictable (and
