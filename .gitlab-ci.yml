@@ -10,7 +10,6 @@ cache:
 
 stages:
   - build
-  - test
   - deploy
 
 before_script:
@@ -22,13 +21,6 @@ stack-build:
   script:
     - stack build
     - stack exec site rebuild
-
-stack-test:
-  stage: test
-  needs:
-    - stack-build
-  script:
-    - stack test
 
 deploy-to-netlify: 
   stage: deploy
