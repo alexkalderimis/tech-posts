@@ -26,7 +26,6 @@ stack-build:
 deploy-prod: 
   image: node
   stage: deploy
-  when: manual
   only:
     - master
   needs:
