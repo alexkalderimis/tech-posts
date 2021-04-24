@@ -1,4 +1,6 @@
-image: haskell:8.6.3
+stages:
+  - build
+  - deploy
 
 variables:
   STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
@@ -9,21 +11,17 @@ cache:
     - .stack-root/
     - _site
 
-stages:
-  - build
-  - deploy
-
-before_script:
-  - stack install --only-dependencies
-
 stack-build:
+  image: haskell:8.6.3
   stage: build
   needs: []
+  before_script:
+    - stack install --only-dependencies
   script:
     - stack build
     - stack exec site rebuild
 
-deploy-prod: 
+netlify: 
   image: node
   stage: deploy
   only:
