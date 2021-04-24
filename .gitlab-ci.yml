@@ -26,11 +26,11 @@ stack-build:
 deploy-prod: 
   image: node
   stage: deploy
+  when: manual
+  only:
+    - master
   needs:
     - stack-build
-  when: manual
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
   before_script:
     - npm install netlify-cli -g
   script:
