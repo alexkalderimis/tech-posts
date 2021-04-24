@@ -1,6 +1,6 @@
 ---
 title: Goldilocks Rectangle - finding a better solution 
-draft: false
+draft: posts
 published: 2019-02-27
 description: Three different ways to solve a problem in a functional language,
              with some discussion of the pros and cons of each approach.
