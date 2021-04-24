@@ -7,6 +7,7 @@ cache:
   paths:
     - .stack-work/
     - .stack-root/
+    - _site
 
 stages:
   - build
@@ -23,6 +24,7 @@ stack-build:
     - stack exec site rebuild
 
 deploy-to-netlify: 
+  image: node
   stage: deploy
   needs:
     - stack-build
