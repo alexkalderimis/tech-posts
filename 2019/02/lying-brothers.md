@@ -9,7 +9,7 @@ tags: clojure, puzzles, composition, category-theory
 The famous puzzle of the two lying brothers is a both well known and poorly
 understood:
 
-[picture from Labyrinth]
+![picture from Labyrinth][labyrinth]
 
 > There are two doors in front of you, each guarded by one of two brothers. One
 > door leads to freedom, the other to certain doom. One of the brothers can only
@@ -209,3 +209,5 @@ And they form a category that composes with `(.)` and has the identity
 `mempty` is `id. So we can use either set of laws, to show that we can factor
 out the identity element, i.e. the truth-telling guard, leaving us with just the
 liar.
+
+[labyrinth]: /images/labyrinth-guards.jpg
