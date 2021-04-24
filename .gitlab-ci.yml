@@ -1,8 +1,12 @@
-image: sakshamsharma/docker-hakyll
+image: haskell:8.6.5
+
+variables:
+  STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
 
 cache:
-    paths:
-        - .stack-work/
+  paths:
+    - .stack-work/
+    - .stack-root/
 
 stages:
   - build
@@ -10,7 +14,6 @@ stages:
   - deploy
 
 before_script:
-  - npm install netlify-cli -g
   - stack install --only-dependencies
 
 test:
@@ -22,6 +25,10 @@ build:
     - stack build
 
 deploy: 
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
   script:
+    - npm install netlify-cli -g
     - netlify deploy --prod --dir=_site
 
