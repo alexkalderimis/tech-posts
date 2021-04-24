@@ -17,5 +17,5 @@ The Site
 
 This site is built from markdown using [Hakyll](http://jaspervdj.be/hakyll) and [pandoc](https://pandoc.org), and is hosted on
 [netlify](https://www.netlify.com/). The source code can be found on
-[GitHub](https://github.com/alexkalderimis/tech-posts).
+[GitLab](https://gitlab.com/alexkalderimis/tech-posts).
 
