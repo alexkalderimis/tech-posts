@@ -32,6 +32,7 @@ deploy-to-netlify:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: manual
       allow_failure: true
-  script:
+  before_script:
     - npm install netlify-cli -g
+  script:
     - netlify deploy --prod --dir=_site
