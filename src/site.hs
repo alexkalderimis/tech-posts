@@ -1,12 +1,8 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid
 import           Hakyll
 
-import Text.Pandoc.Extensions (enableExtension, Extension(..))
-import Text.Pandoc.Options (ReaderOptions(readerExtensions))
-import Data.Default (def)
-import System.Process (readProcess)
+import qualified Hakyll.Core.Metadata as MD
 
 import Site.Contexts
 import Site.Feed
@@ -35,7 +31,7 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" baseContext
             >>= relativizeUrls
 
-    match postsPattern $ do
+    matchMetadata postsPattern published $ do
         route $ setExtension "html"
         compile $ tocCompiler
             >>= (\(doc, toc) -> loadAndApplyTemplate "templates/post.html"
@@ -72,7 +68,14 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
-    match postsPattern . version "feed" $ compile pandocFeedCompiler
+    matchMetadata postsPattern published compilePost
 
     createFeed postsPattern
 
+-- helpers:
+
+compilePost :: Rules ()
+compilePost = version "feed" $ compile pandocFeedCompiler
+
+published :: MD.Metadata -> Bool
+published = (== Just "true") . MD.lookupString "published"
