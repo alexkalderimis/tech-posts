@@ -478,10 +478,8 @@ section.page {
   justify-content: space-between;
   border-bottom: 2px solid #1a6db5;
   flex: initial;
-  flex-flow: column;
+  flex-direction: column;
   flex-grow: 0;
-  min-height: 110px;
-  max-height: 120px;
 }
 .page > main {
   flex-grow: 1;
@@ -515,6 +513,7 @@ h1.name {
   display: flex;
   flex-flow: row;
   margin-bottom: 0.2em;
+  justify-content: space-between;
 }
 h1.name .stamp {
   padding-top: 0.5em;
@@ -551,7 +550,6 @@ header nav {
   justify-content: flex-end;
   padding: 0.2em 0em;
   flex-flow: row;
-  margin-bottom: 1em;
 }
 header nav a {
   font-size: 1.2em;
@@ -4232,9 +4230,10 @@ p > object:only-child {
         header nav {
           flex-flow: column;
           margin-bottom: 0;
+          margin-bottom: 1em;
         }
         .page > header {
-          flex-flow: column;
+          flex-direction: row;
         }
         h1.name .stamp {
           font-size: 32px;
