@@ -22,7 +22,8 @@ stack-build:
   script:
     - stack build
 
-test:
+stack-test:
+  stage: test
   needs:
     - stack-build
   script:
@@ -31,7 +32,7 @@ test:
 deploy-to-netlify: 
   stage: deploy
   needs:
-    - build
+    - stack-build
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: manual
