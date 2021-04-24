@@ -23,32 +23,14 @@ stack-build:
     - stack build
     - stack exec site rebuild
 
-deploy-to-verification: 
-  image: node
-  stage: deploy
-  needs:
-    - stack-build
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      when: manual
-      allow_failure: true
-  before_script:
-    - npm install netlify-cli -g
-  script:
-    - echo "Deploying to $NETLIFY_SITE_ID"
-    - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --dir=_site
-  environment:
-    name: review
-
 deploy-prod: 
   image: node
   stage: deploy
   needs:
     - stack-build
+  when: manual
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
-      when: manual
-      allow_failure: true
   before_script:
     - npm install netlify-cli -g
   script:
