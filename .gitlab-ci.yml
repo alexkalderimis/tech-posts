@@ -21,6 +21,7 @@ stack-build:
   needs: []
   script:
     - stack build
+    - stack exec site rebuild
 
 stack-test:
   stage: test
