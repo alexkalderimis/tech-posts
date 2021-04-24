@@ -23,7 +23,7 @@ stack-build:
     - stack build
     - stack exec site rebuild
 
-deploy-to-netlify: 
+deploy-to-verification: 
   image: node
   stage: deploy
   needs:
@@ -35,4 +35,18 @@ deploy-to-netlify:
   before_script:
     - npm install netlify-cli -g
   script:
-    - netlify deploy --prod --dir=_site
+    - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=_site
+
+deploy-prod: 
+  image: node
+  stage: deploy
+  needs:
+    - stack-build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+      allow_failure: true
+  before_script:
+    - npm install netlify-cli -g
+  script:
+    - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir=_site
