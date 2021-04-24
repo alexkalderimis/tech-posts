@@ -35,7 +35,8 @@ deploy-to-verification:
   before_script:
     - npm install netlify-cli -g
   script:
-    - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=_site
+    - echo "Deploying to $NETLIFY_SITE_ID"
+    - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --dir=_site
 
 deploy-prod: 
   image: node
@@ -49,4 +50,4 @@ deploy-prod:
   before_script:
     - npm install netlify-cli -g
   script:
-    - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir=_site
+    - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod --dir=_site
