@@ -7,8 +7,11 @@ $(SITE): alex-kalderimis-dev.cabal $(SRC)
 _site: $(SITE) $(SRC)
 	stack exec site rebuild
 
-.PHONY: clean
+.PHONY: watch
+.watch:
+	stack run site -- watch
 
+.PHONY: clean
 clean:
 	rm -rf _site
 	rm -rf _cache
