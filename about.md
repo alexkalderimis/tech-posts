@@ -29,3 +29,5 @@ This site is built from markdown using [Hakyll](http://jaspervdj.be/hakyll) and 
 [netlify](https://www.netlify.com/). The source code can be found on
 [GitLab](https://gitlab.com/alexkalderimis/tech-posts).
 
+The content of this site is licensed under [Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+Re-use of content is permitted with attribution.
