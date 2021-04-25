@@ -21,12 +21,12 @@ stack-build:
       - _site
 
 netlify: 
+  image: node
+  stage: deploy
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - .npm/
-  image: node
-  stage: deploy
   only:
     - master
   script:
