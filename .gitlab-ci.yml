@@ -9,28 +9,25 @@ cache:
   paths:
     - .stack-work/
     - .stack-root/
-    - _site
 
 stack-build:
   image: haskell:8.6.3
   stage: build
-  needs: []
-  before_script:
-    - stack install --only-dependencies
   script:
+    - stack install --only-dependencies
     - stack build
     - stack exec site rebuild
+  artifacts:
+    paths:
+      - _site
 
 netlify: 
   image: node
   stage: deploy
   only:
     - master
-  needs:
-    - stack-build
-  before_script:
-    - npm install netlify-cli -g
   script:
+    - npm install netlify-cli -g
     - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod --dir=_site
   environment:
     name: prod
