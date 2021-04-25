@@ -86,7 +86,7 @@ passing that back to us.
 A liar is exactly the same, except that after recalling a fact, they tell us the
 opposite of what they know to be true. So trying that out:
 
-````clojure
+```clojure
 (let [a (truth-teller facts)
       b (liar facts)]
   (doseq [fact (keys facts)
