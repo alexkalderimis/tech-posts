@@ -1,6 +1,5 @@
 ---
 title: Lying Brothers, a categorical solution
-published: true
 description: A look at the lying brothers puzzle through the lens of function
              composition and category theory.
 tags: clojure, puzzles, composition, category-theory

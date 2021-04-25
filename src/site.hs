@@ -13,6 +13,9 @@ main :: IO ()
 main = hakyll $ do
     let postsPattern = "posts/*"
 
+    matchMetadata postsPattern published compileFeedEntry
+    matchMetadata postsPattern published compilePost
+
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
@@ -60,9 +63,6 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
-    matchMetadata postsPattern published compileFeedEntry
-    matchMetadata postsPattern published compilePost
-
     createFeed postsPattern
 
 -- helpers:
@@ -80,4 +80,4 @@ compilePost = do
       >>= relativizeUrls
 
 published :: MD.Metadata -> Bool
-published = (== Just "true") . MD.lookupString "published"
+published = (/= Just "true") . MD.lookupString "draft"

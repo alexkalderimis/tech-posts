@@ -1,6 +1,6 @@
 ---
 title: 'Abusing Monoids: Monoidal predicate combinators'
-published: true
+draft: false
 description: There are many ways to skin a predicate, and monoids fold into one of
              them.
 tags: haskell, monoids

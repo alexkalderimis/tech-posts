@@ -1,7 +1,6 @@
 ---
 title: Continuous deployment to Netlify from GitLab CI
-published: true
-description: 
+description: My experience using GitLab CI/CD pipelines to deploy a static site to Netlify
 tags: haskell, netlify, ci, gitlab
 ---
 

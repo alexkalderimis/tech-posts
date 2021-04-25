@@ -5,7 +5,6 @@ module Site.Contexts where
 import Data.Function (on)
 import Data.List (groupBy)
 import Control.Applicative
-import           Data.Monoid
 import           Hakyll
 import System.Process (readProcess)
 import Data.Digest.Pure.MD5 (md5)
