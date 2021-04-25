@@ -51,6 +51,11 @@ To automate this process using GitLab CI/CD, we define the steps in a
 `.gitlab-ci.yml` file. This is a very powerful format, and we can define
 arbitrary jobs that we can arrange in any topology that makes sense for us.
 
+The only tricky bit about this set-up is that we have two different languages,
+with different build chains, caching needs, the lot. The only thing that
+connects them is the `_site` directory, produced by the `build` stage. We will
+model that as an artifact.
+
 ### Setup
 
 We need two stages:
@@ -61,44 +66,54 @@ stages:
   - deploy
 ```
 
-Haskell builds can take a while (the first time at least), so we will definitely
-need caching to speed builds up. We are going to cache the stack build results,
-as well as the built site itself:
-
-```yaml
-variables:
-  STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
-  
-cache:
-  paths:
-    - .stack-work/
-    - .stack-root/
-    - _site
-```
-
-We use the variable to ensure the stack directories are in a predictable (and
-cachable) location.
-
 ### Building
 
-With that done, we can define the build job:
+We don't _need_ GHC installed - stack can do that, but having it around (and
+stack of course) would speed things up. So we can define the build job to use a
+specific Haskell image:
 
 ```yaml
 stack-build:
   image: haskell:8.6.3
   stage: build
-  needs: []
-  before_script:
-    - stack install --only-dependencies
+```
+
+Haskell builds can take a while (the first time at least), so we will definitely
+need caching to speed builds up. We are going to cache the stack build results,
+as well as the built site itself:
+
+```
+  variables:
+    STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .stack-work/
+      - .stack-root/
+```
+
+We use the variable to ensure the stack directories are in a predictable (and
+cachable) location.
+
+With that done, we can define the build script, which compiles the Hakyll
+engine, and then builds the site:
+
+```yaml
   script:
+    - stack install --only-dependencies
     - stack build
     - stack exec site rebuild
 ```
 
-This says we want to use a particular Haskell image (matching the stack
-resolver), and this job will be called `"stack-build"` in the `"build"` stage.
-It does not have any dependencies, and it has a simple build script (here
-divided into two sections).
+The script produces a directory called `_site` that we want to use in the deploy
+job, so lets name it as an artifact:
+
+
+```yaml
+  artifacts:
+    paths:
+      - _site
+```
 
 When this completes, we will know that our site builds, and the new build result
 will be cached in `_site` and be available to subsequent jobs.
@@ -119,12 +134,17 @@ Since the `netlify-cli` is a node-js application, we will use a `node` image:
 ```
 
 We don't need to actually build the site here, since the build job generated it,
-and cached it for us, but that does mean we need to ensure the build job has run
-first:
+and it is stored as an artifact. We can assume that this artifact will be
+available to us by default, so we don't need to specify anything.
+
+We will want caching though - specific to node, so that we can avoid installing
+the CLI each time:
 
 ```yaml
-  needs:
-    - stack-build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .npm/
 ```
 
 We only want to deploy from the master branch:
@@ -137,9 +157,8 @@ We only want to deploy from the master branch:
 And then we can define our deployment steps:
 
 ```yaml
-  before_script:
-    - npm install netlify-cli -g
   script:
+    - npm install netlify-cli -g
     - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod --dir=_site
 ```
 
