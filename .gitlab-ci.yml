@@ -2,17 +2,16 @@ stages:
   - build
   - deploy
 
-variables:
-  STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
-
-cache:
-  paths:
-    - .stack-work/
-    - .stack-root/
-
 stack-build:
   image: haskell:8.6.3
   stage: build
+  variables:
+    STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .stack-work/
+      - .stack-root/
   script:
     - stack install --only-dependencies
     - stack build
@@ -22,6 +21,10 @@ stack-build:
       - _site
 
 netlify: 
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .npm/
   image: node
   stage: deploy
   only:
