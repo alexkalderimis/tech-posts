@@ -1,0 +1,21 @@
+{
+  "name": "tech-posts",
+  "version": "1.0.0",
+  "description": "Deploy harness for the blog",
+  "scripts": {
+    "deploy": "netlify deploy --prod --dir=_site"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/alexkalderimis/tech-posts.git"
+  },
+  "author": "Alex Kalderimis",
+  "license": "CC-BY",
+  "bugs": {
+    "url": "https://gitlab.com/alexkalderimis/tech-posts/issues"
+  },
+  "homepage": "https://gitlab.com/alexkalderimis/tech-posts#readme",
+  "dependencies": {
+    "netlify-cli": "^3.21.10"
+  }
+}

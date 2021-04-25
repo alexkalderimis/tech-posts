@@ -30,7 +30,7 @@ netlify:
   only:
     - master
   script:
-    - npm install netlify-cli -g
-    - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod --dir=_site
+    - npm ci --cache .npm --prefer-offline
+    - npm run deploy -- --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
   environment:
     name: prod

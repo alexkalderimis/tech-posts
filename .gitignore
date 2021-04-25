@@ -10,3 +10,4 @@ tech-posts.cabal
 .DS_Store
 alex-kalderimis-dev.cabal
 tags
+node_modules
