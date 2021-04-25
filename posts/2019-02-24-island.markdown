@@ -1,6 +1,5 @@
 ---
 title: Consistently Logical
-published: false
 description: Using functional programming to solve logical puzzles in code
 tags: haskell, the-riddler, logic
 ---

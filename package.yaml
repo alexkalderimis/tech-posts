@@ -29,6 +29,9 @@ executables:
   rectangle:
     main: rectangle.hs
     source-dirs: 2019/02
+  valleys:
+    main: valleys.hs
+    source-dirs: 2019/02
   site:
     main: site.hs
     source-dirs: src/

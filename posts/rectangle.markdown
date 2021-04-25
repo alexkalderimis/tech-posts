@@ -1,6 +1,5 @@
 ---
 title: Goldilocks Rectangle - finding a better solution 
-draft: false
 published: 2019-02-27
 description: Three different ways to solve a problem in a functional language,
              with some discussion of the pros and cons of each approach.
@@ -696,6 +695,12 @@ immediately obvious - at least not to me.
   All the approaches are just fine for even moderately sized inputs - sweating the small
   performance gains is just not going to be worth it.
 
+* You just can't beat linear scans
+
+  If you need the best, you just can't beat a low-level linear scan. But as good as it is, the
+  divide-and-conquer approaches are more than fast enough for most people's needs, if you cannot
+  find a linear scan that works for you.
+
 * Simple optimisation can produce massive wins
 
   Just nubbing the input makes a massive performance improvement for the naive approach. While this
@@ -717,12 +722,6 @@ immediately obvious - at least not to me.
   interval maps, faster heaps, and as you can see here, faster segment trees there to be used.
   Just as interesting is the small amount of code that was needed to produce something that
   out-performed finger-trees.
-
-* You just can beat linear scans
-
-  If you need the best, you just can't beat a low-level linear scan. But as good as it is, the
-  divide-and-conquer approaches are more than fast enough for most people's needs, if you cannot
-  find a linear scan that works for you.
 
 # picture credits:
 

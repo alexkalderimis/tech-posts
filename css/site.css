@@ -50,6 +50,8 @@ Use it to make something cool, have fun, and share what you've learned with othe
 Styles based on Normalize v5.0.0 @link https://github.com/necolas/normalize.css
 --------------------------------------------------------------*/
 
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
 html {
 	font-family: sans-serif;
 	line-height: 1.15;
@@ -136,7 +138,7 @@ strong {
 code,
 kbd,
 samp {
-	font-family: monospace, monospace;
+	font-family: 'Fira Code', monospace, monospace;
 	font-size: 1em;
 }
 
@@ -478,10 +480,8 @@ section.page {
   justify-content: space-between;
   border-bottom: 2px solid #1a6db5;
   flex: initial;
-  flex-flow: column;
+  flex-direction: column;
   flex-grow: 0;
-  min-height: 110px;
-  max-height: 120px;
 }
 .page > main {
   flex-grow: 1;
@@ -515,6 +515,7 @@ h1.name {
   display: flex;
   flex-flow: row;
   margin-bottom: 0.2em;
+  justify-content: space-between;
 }
 h1.name .stamp {
   padding-top: 0.5em;
@@ -551,7 +552,6 @@ header nav {
   justify-content: flex-end;
   padding: 0.2em 0em;
   flex-flow: row;
-  margin-bottom: 1em;
 }
 header nav a {
   font-size: 1.2em;
@@ -657,7 +657,7 @@ address {
 
 pre {
 	background: #eee;
-	font-family: "Courier 10 Pitch", Courier, monospace;
+	font-family: "Fira Code", "Courier 10 Pitch", Courier, monospace;
 	font-size: 15px;
 	font-size: 0.9375rem;
 	line-height: 1.6;
@@ -671,7 +671,7 @@ code,
 kbd,
 tt,
 var {
-	font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+	font-family: 'Fira Code', Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
 	font-size: 15px;
 	font-size: 0.9375rem;
 }
@@ -4196,7 +4196,6 @@ p > object:only-child {
 		clear: left;
 		float: left;
 		margin-bottom: 0;
-		width: 36%;
 	}
 
 	.site-info {
@@ -4242,9 +4241,10 @@ p > object:only-child {
         header nav {
           flex-flow: column;
           margin-bottom: 0;
+          margin-bottom: 1em;
         }
         .page > header {
-          flex-flow: column;
+          flex-direction: row;
         }
         h1.name .stamp {
           font-size: 32px;

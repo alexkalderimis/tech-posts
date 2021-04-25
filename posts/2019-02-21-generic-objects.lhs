@@ -1,6 +1,6 @@
 ---
 title: Duck-typing with GHC Generics
-published: false
+draft: false
 description: An exploration of structural typing in a nominal world
 tags: haskell, generics, GHC
 ---

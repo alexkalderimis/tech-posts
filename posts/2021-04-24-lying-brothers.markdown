@@ -1,13 +1,12 @@
 ---
 title: Lying Brothers, a categorical solution
-published: false
 description: A look at the lying brothers puzzle through the lens of function
              composition and category theory.
 tags: clojure, puzzles, composition, category-theory
 ---
 
-The famous puzzle of the two lying brothers is a both well known and poorly
-understood:
+The famous puzzle of the two lying brothers is well known
+but its solution is sometimes poorly understood:
 
 ![picture from Labyrinth][labyrinth]
 
@@ -86,7 +85,7 @@ passing that back to us.
 A liar is exactly the same, except that after recalling a fact, they tell us the
 opposite of what they know to be true. So trying that out:
 
-````clojure
+```clojure
 (let [a (truth-teller facts)
       b (liar facts)]
   (doseq [fact (keys facts)

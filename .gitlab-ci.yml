@@ -1,27 +1,36 @@
-image: sakshamsharma/docker-hakyll:v3
-
-cache:
-    paths:
-        - .stack-work/
-
 stages:
   - build
-  - test
   - deploy
 
-before_script:
-  - npm install netlify-cli -g
-  - stack install --only-dependencies
-
-test:
+stack-build:
+  image: haskell:8.6.3
+  stage: build
+  variables:
+    STACK_ROOT: "${CI_PROJECT_DIR}/.stack-root"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .stack-work/
+      - .stack-root/
   script:
-    - stack test
-
-build:
-  script:
+    - stack install --only-dependencies
     - stack build
+    - stack exec site rebuild
+  artifacts:
+    paths:
+      - _site
 
-deploy: 
+netlify: 
+  image: node
+  stage: deploy
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .npm/
+  only:
+    - master
   script:
-    - netlify deploy --prod --dir=_site
-
+    - npm install netlify-cli -g
+    - netlify deploy --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod --dir=_site
+  environment:
+    name: prod

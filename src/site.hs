@@ -3,6 +3,8 @@
 
 import           Hakyll
 
+import qualified Hakyll.Core.Metadata as MD
+
 import Site.Contexts
 import Site.Feed
 import Site.Pandoc (pandocFeedCompiler, tocCompiler)
@@ -11,6 +13,9 @@ import Site.Pandoc (pandocFeedCompiler, tocCompiler)
 main :: IO ()
 main = hakyll $ do
     let postsPattern = "posts/*"
+
+    matchMetadata postsPattern published compileFeedEntry
+    matchMetadata postsPattern published compilePost
 
     match "images/*" $ do
         route   idRoute
@@ -28,14 +33,6 @@ main = hakyll $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" baseContext
-            >>= relativizeUrls
-
-    match postsPattern $ do
-        route $ setExtension "html"
-        compile $ tocCompiler
-            >>= (\(doc, toc) -> loadAndApplyTemplate "templates/post.html"
-                                                    (toc <> postCtx) doc)
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
     create ["archive.html"] $ do
@@ -67,7 +64,22 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
-    match postsPattern . version "feed" $ compile pandocFeedCompiler
-
     createFeed postsPattern
 
+--------------------------------------------------------------------------------
+-- helpers:
+
+compileFeedEntry :: Rules ()
+compileFeedEntry = version "feed" $ compile pandocFeedCompiler
+
+compilePost :: Rules ()
+compilePost = do
+  route $ setExtension "html"
+  compile $ tocCompiler
+      >>= (\(doc, toc) -> loadAndApplyTemplate "templates/post.html"
+                                              (toc <> postCtx) doc)
+      >>= loadAndApplyTemplate "templates/default.html" postCtx
+      >>= relativizeUrls
+
+published :: MD.Metadata -> Bool
+published = (/= Just "true") . MD.lookupString "draft"
