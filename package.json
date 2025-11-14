@@ -16,6 +16,6 @@
   },
   "homepage": "https://gitlab.com/alexkalderimis/tech-posts#readme",
   "dependencies": {
-    "netlify-cli": "^3.21.10"
+    "netlify-cli": "^23.11.0"
   }
 }
